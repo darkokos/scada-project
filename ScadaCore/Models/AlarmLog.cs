@@ -8,7 +8,6 @@ public class AlarmLog {
     
     // TODO: Either like this, if reference to alarm is needed for some behaviour, or just track the logged message, to
     // avoid a join in the db
-    
     [Required] [ForeignKey("Alarm")] public int AlarmId { get; set; }
     public virtual Alarm Alarm { get; set; }
     

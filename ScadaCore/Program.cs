@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ScadaCore.Repositories;
+
 namespace ScadaCore;
 
 public class Program
@@ -9,6 +12,11 @@ public class Program
         // Add services to the container.
         
         builder.Services.AddControllers();
+
+        builder.Services.AddDbContext<UserContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDb")));
+        builder.Services.AddDbContext<ValueAndAlarmContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ValuesAndAlarmsDb")));
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

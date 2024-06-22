@@ -9,6 +9,5 @@ public class Tag {
     public string Description { get; set; }
     
     // TODO: Change the type of this when known
-    
     [Required] public int InputOutputAddress { get; set; }
 }

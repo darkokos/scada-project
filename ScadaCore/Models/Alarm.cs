@@ -19,7 +19,6 @@ public class Alarm {
     [Required] public AlarmPriority Priority { get; set; }
     
     // TODO: I am not certain about anything after this point
-    
     [Required] public int Threshold { get; set; }
     
     [Required]
