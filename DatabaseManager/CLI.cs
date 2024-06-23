@@ -108,7 +108,18 @@ namespace DatabaseManger
             await HttpManager.WriteTagOutputValue(dto);
         }
         public async Task ShowCurrentTagValuesHandler() { }
-        public async Task RegisterHandler() { }
+
+        public async Task RegisterHandler()
+        {
+            RegisterDTO dto = new RegisterDTO();
+            Console.Write("Enter your username: ");
+            dto.username = Console.ReadLine().Trim();
+            
+            Console.Write("Enter your password: ");
+            dto.password = Console.ReadLine().Trim();
+
+            await HttpManager.Register(dto);
+        }
         public async Task LoginHandler() { }
         public async Task LogoutHandler() { }
     }
