@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Threading.Tasks;
 using Common.DatabaseManagerCommon;
 
 namespace DatabaseManger
@@ -8,7 +7,7 @@ namespace DatabaseManger
     public class CLI
     {
         public string token = "asddasasd";
-        public async void Start()
+        public void Start()
         {
             while (true)
             {
@@ -22,14 +21,14 @@ namespace DatabaseManger
                 }
 
                 if (option == 0) break;
-                else if (option == 1) await AddTagHandler();
-                else if (option == 2) await RemoveTagHandler();
-                else if (option == 3) await ChangeTagScanningHandler();
-                else if (option == 4) await WriteTagHandler();
-                else if (option == 5) await ShowCurrentTagValuesHandler();
-                else if (option == 6) await RegisterHandler();
-                else if (option == 7) await LoginHandler();
-                else await LogoutHandler();
+                else if (option == 1) AddTagHandler();
+                else if (option == 2) RemoveTagHandler();
+                else if (option == 3) ChangeTagScanningHandler();
+                else if (option == 4) WriteTagHandler();
+                else if (option == 5) ShowCurrentTagValuesHandler();
+                else if (option == 6) RegisterHandler();
+                else if (option == 7) LoginHandler();
+                else LogoutHandler();
             }
         }
 
@@ -53,18 +52,18 @@ namespace DatabaseManger
         }
 
         // TODO
-        public async Task AddTagHandler() { }
+        public void AddTagHandler() { }
 
-        public async Task RemoveTagHandler()
+        public void RemoveTagHandler()
         {
             DeleteTagDTO dto = new DeleteTagDTO();
             dto.token = token;
             Console.Write("Enter name of the tag to be deleted: ");
             dto.TagName = Console.ReadLine().Trim();
-            await HttpManager.DeleteTag(dto);
+            HttpManager.DeleteTag(dto).Wait();
         }
 
-        public async Task ChangeTagScanningHandler()
+        public void ChangeTagScanningHandler()
         {
             ChangeScanTagDTO dto = new ChangeScanTagDTO();
             dto.token = token;
@@ -83,10 +82,11 @@ namespace DatabaseManger
                     break;
                 }
             }
-            await HttpManager.ChangeTagScanning(dto);
+
+            HttpManager.ChangeTagScanning(dto).Wait();
         }
 
-        public async Task WriteTagHandler()
+        public void WriteTagHandler()
         {
             WriteTagValueDTO dto = new WriteTagValueDTO();
             dto.token = token;
@@ -106,13 +106,13 @@ namespace DatabaseManger
                 }
             }
 
-            await HttpManager.WriteTagOutputValue(dto);
+            HttpManager.WriteTagOutputValue(dto).Wait();
         }
         
         // TODO
-        public async Task ShowCurrentTagValuesHandler() { }
+        public void ShowCurrentTagValuesHandler() { }
 
-        public async Task RegisterHandler()
+        public void RegisterHandler()
         {
             RegisterDTO dto = new RegisterDTO();
             Console.Write("Enter your username: ");
@@ -121,10 +121,10 @@ namespace DatabaseManger
             Console.Write("Enter your password: ");
             dto.password = Console.ReadLine().Trim();
 
-            await HttpManager.Register(dto);
+            HttpManager.Register(dto).Wait();
         }
 
-        public async Task LoginHandler()
+        public void LoginHandler()
         {
             LoginDTO dto = new LoginDTO();
             
@@ -134,10 +134,10 @@ namespace DatabaseManger
             Console.Write("Enter your password: ");
             dto.password = Console.ReadLine().Trim();
 
-            await HttpManager.Login(dto);
+            HttpManager.Login(dto).Wait();
         }
 
-        public async Task LogoutHandler()
+        public void LogoutHandler()
         {
             LogoutDTO dto = new LogoutDTO();
             
@@ -145,7 +145,7 @@ namespace DatabaseManger
             dto.username = Console.ReadLine().Trim();
             dto.token = token;
 
-            await HttpManager.Logout(dto);
+            HttpManager.Logout(dto).Wait();
         }
     }
 }
