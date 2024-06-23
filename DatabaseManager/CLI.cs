@@ -62,7 +62,28 @@ namespace DatabaseManger
             dto.TagName = Console.ReadLine();
             await HttpManager.DeleteTag(dto);
         }
-        public async Task ChangeTagScanningHandler() { }
+
+        public async Task ChangeTagScanningHandler()
+        {
+            ChangeScanTagDTO dto = new ChangeScanTagDTO();
+            dto.token = token;
+            Console.Write("Enter name of the tag to be deleted: ");
+            dto.TagName = Console.ReadLine();
+
+            while (true)
+            {
+                Console.Write("Tag scanning on (true/false):");
+                string input = Console.ReadLine();
+                bool state;
+                if (!Boolean.TryParse(input, out state)) Console.WriteLine("Malformed input, try again!");
+                else
+                {
+                    dto.state = state;
+                    break;
+                }
+            }
+            await HttpManager.ChangeTagScanning(dto);
+        }
         public async Task WriteTagHandler() { }
         public async Task ShowCurrentTagValuesHandler() { }
         public async Task RegisterHandler() { }
