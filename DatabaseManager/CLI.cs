@@ -133,6 +133,16 @@ namespace DatabaseManger
 
             await HttpManager.Login(dto);
         }
-        public async Task LogoutHandler() { }
+
+        public async Task LogoutHandler()
+        {
+            LogoutDTO dto = new LogoutDTO();
+            
+            Console.Write("Enter your username: ");
+            dto.username = Console.ReadLine().Trim();
+            dto.token = token;
+
+            await HttpManager.Logout(dto);
+        }
     }
 }
