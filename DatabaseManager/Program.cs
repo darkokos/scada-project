@@ -1,12 +1,10 @@
-﻿
-namespace DatabaseManger
+﻿namespace DatabaseManager;
+
+class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
             CLI cli = new CLI();
             cli.Start();
-        }
     }
 }

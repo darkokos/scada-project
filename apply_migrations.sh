@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if ! command -v dotnet-ef
+if ! command -v dotnet ef
 then
   dotnet tool install --global dotnet-ef
 fi
