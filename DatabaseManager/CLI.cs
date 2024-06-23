@@ -52,6 +52,7 @@ namespace DatabaseManger
             Console.WriteLine("---------------------------------------");
         }
 
+        // TODO
         public async Task AddTagHandler() { }
 
         public async Task RemoveTagHandler()
@@ -59,7 +60,7 @@ namespace DatabaseManger
             DeleteTagDTO dto = new DeleteTagDTO();
             dto.token = token;
             Console.Write("Enter name of the tag to be deleted: ");
-            dto.TagName = Console.ReadLine();
+            dto.TagName = Console.ReadLine().Trim();
             await HttpManager.DeleteTag(dto);
         }
 
@@ -68,7 +69,7 @@ namespace DatabaseManger
             ChangeScanTagDTO dto = new ChangeScanTagDTO();
             dto.token = token;
             Console.Write("Enter name of the tag to be deleted: ");
-            dto.TagName = Console.ReadLine();
+            dto.TagName = Console.ReadLine().Trim();
 
             while (true)
             {
@@ -90,7 +91,7 @@ namespace DatabaseManger
             WriteTagValueDTO dto = new WriteTagValueDTO();
             dto.token = token;
             Console.Write("Enter name of the tag to be deleted: ");
-            dto.TagName = Console.ReadLine();
+            dto.TagName = Console.ReadLine().Trim();
 
             while (true)
             {
@@ -107,6 +108,8 @@ namespace DatabaseManger
 
             await HttpManager.WriteTagOutputValue(dto);
         }
+        
+        // TODO
         public async Task ShowCurrentTagValuesHandler() { }
 
         public async Task RegisterHandler()
