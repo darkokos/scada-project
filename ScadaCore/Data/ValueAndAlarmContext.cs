@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScadaCore.Models;
 
-namespace ScadaCore.Repositories;
+namespace ScadaCore.Data;
 
 public class ValueAndAlarmContext : DbContext {
     public DbSet<TagLog> TagLogs => Set<TagLog>();
