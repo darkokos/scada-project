@@ -134,7 +134,9 @@ namespace DatabaseManger
             Console.Write("Enter your password: ");
             dto.password = Console.ReadLine().Trim();
 
-            HttpManager.Login(dto).Wait();
+            var task = HttpManager.Login(dto);
+            task.Wait();
+            this.token = task.Result;
         }
 
         public void LogoutHandler()
@@ -146,6 +148,7 @@ namespace DatabaseManger
             dto.token = token;
 
             HttpManager.Logout(dto).Wait();
+            this.token = "";
         }
     }
 }
