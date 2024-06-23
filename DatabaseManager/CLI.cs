@@ -120,7 +120,19 @@ namespace DatabaseManger
 
             await HttpManager.Register(dto);
         }
-        public async Task LoginHandler() { }
+
+        public async Task LoginHandler()
+        {
+            LoginDTO dto = new LoginDTO();
+            
+            Console.Write("Enter your username: ");
+            dto.username = Console.ReadLine().Trim();
+            
+            Console.Write("Enter your password: ");
+            dto.password = Console.ReadLine().Trim();
+
+            await HttpManager.Login(dto);
+        }
         public async Task LogoutHandler() { }
     }
 }
