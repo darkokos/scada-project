@@ -5,7 +5,8 @@ namespace DatabaseManger
 {
     public class CLI
     {
-        public static void Start()
+        public string token = "";
+        public void Start()
         {
             while (true)
             {
@@ -30,28 +31,32 @@ namespace DatabaseManger
             }
         }
 
-        public static void Menu()
+        public void Menu()
         {
             Console.WriteLine("---------------------------------------");
             Console.WriteLine("(0) Exit");
-            Console.WriteLine("(1) Add Tag");
-            Console.WriteLine("(2) Remove Tag");
-            Console.WriteLine("(3) Change Tag Scanning");
-            Console.WriteLine("(4) Write Tag Output Value");
-            Console.WriteLine("(5) Show Current Tag Values");
+            if (this.token != "") {
+                Console.WriteLine("(1) Add Tag");
+                Console.WriteLine("(2) Remove Tag");
+                Console.WriteLine("(3) Change Tag Scanning");
+                Console.WriteLine("(4) Write Tag Output Value");
+                Console.WriteLine("(5) Show Current Tag Values");
+            }
             Console.WriteLine("(6) Register");
             Console.WriteLine("(7) Login");
-            Console.WriteLine("(8) Logout");
+                
+            if (this.token != "") Console.WriteLine("(8) Logout");
+
             Console.WriteLine("---------------------------------------");
         }
 
-        public static void AddTagHandler() { }
-        public static void RemoveTagHandler() { }
-        public static void ChangeTagScanningHandler() { }
-        public static void WriteTagHandler() { }
-        public static void ShowCurrentTagValuesHandler() { }
-        public static void RegisterHandler() { }
-        public static void LoginHandler() { }
-        public static void LogoutHandler() { }
+        public void AddTagHandler() { }
+        public void RemoveTagHandler() { }
+        public void ChangeTagScanningHandler() { }
+        public void WriteTagHandler() { }
+        public void ShowCurrentTagValuesHandler() { }
+        public void RegisterHandler() { }
+        public void LoginHandler() { }
+        public void LogoutHandler() { }
     }
 }
