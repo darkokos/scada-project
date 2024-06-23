@@ -1,5 +1,5 @@
-﻿using Common.DatabaseManagerCommon;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using DatabaseManager;
 
 namespace ScadaCore.Controllers;
 
