@@ -1,4 +1,5 @@
-﻿namespace DatabaseManger
+﻿
+namespace DatabaseManger
 {
     internal class Program
     {
