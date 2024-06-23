@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
   </ItemGroup>
 
 </Project>
