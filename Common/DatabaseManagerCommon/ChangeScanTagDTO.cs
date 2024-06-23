@@ -1,9 +1,8 @@
-﻿namespace Common.DatabaseManagerCommon
+namespace Common.DatabaseManagerCommon;
+
+public class ChangeScanTagDTO
 {
-    public class ChangeScanTagDTO
-    {
-        public string TagName { get; set; }
-        public bool state { get; set; }
-        public string token { get; set; }
-    }
+    public string TagName { get; set; }
+    public bool state { get; set; }
+    public string token { get; set; }  
 }

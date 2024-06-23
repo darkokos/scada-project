@@ -1,9 +1,8 @@
-﻿namespace Common.DatabaseManagerCommon
+namespace Common.DatabaseManagerCommon;
+
+public class WriteTagValueDTO
 {
-    public class WriteTagValueDTO
-    {
-        public string TagName { get; set; }
-        public int value { get; set; }
-        public string token { get; set; }
-    }
+    public string TagName { get; set; }
+    public int value { get; set; }
+    public string token { get; set; }
 }

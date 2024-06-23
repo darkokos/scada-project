@@ -1,8 +1,8 @@
-﻿namespace Common.DatabaseManagerCommon
+namespace Common.DatabaseManagerCommon;
+
+public class LoginDTO
 {
-    public class LoginDTO
-    {
-        public string username { get; set; }
-        public string password { get; set; }
-    }
+    public string username { get; set; }
+    public string password { get; set; }
+        
 }
