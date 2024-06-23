@@ -11,9 +11,9 @@ namespace DatabaseManger
 {
     public class HttpManager
     {
-        public static string ServerUrl = "localhost:5038/";
+        public static string ServerUrl = "http://localhost:5038/";
 
-        public static async void DeleteTag(DeleteTagDTO dto)
+        public static async Task DeleteTag(DeleteTagDTO dto)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -30,7 +30,7 @@ namespace DatabaseManger
             }
         }
 
-        public static async void ChangeTagScanning(ChangeScanTagDTO dto)
+        public static async Task ChangeTagScanning(ChangeScanTagDTO dto)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -47,7 +47,7 @@ namespace DatabaseManger
             }
         }
 
-        public static async void WriteTagOutputValue(WriteTagValueDTO dto)
+        public static async Task WriteTagOutputValue(WriteTagValueDTO dto)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -78,7 +78,7 @@ namespace DatabaseManger
             }
         }
 
-        public static async void Register(RegisterDTO dto)
+        public static async Task Register(RegisterDTO dto)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -117,7 +117,7 @@ namespace DatabaseManger
             }
         }
         
-        public static async void Logout(LogoutDTO dto)
+        public static async Task Logout(LogoutDTO dto)
         {
             using (HttpClient client = new HttpClient())
             {

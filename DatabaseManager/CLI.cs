@@ -1,12 +1,14 @@
 ﻿
 using System;
+using System.Threading.Tasks;
+using Common.DatabaseManagerCommon;
 
 namespace DatabaseManger
 {
     public class CLI
     {
-        public string token = "";
-        public void Start()
+        public string token = "asddasasd";
+        public async void Start()
         {
             while (true)
             {
@@ -20,14 +22,14 @@ namespace DatabaseManger
                 }
 
                 if (option == 0) break;
-                else if (option == 1) AddTagHandler();
-                else if (option == 2) RemoveTagHandler();
-                else if (option == 3) ChangeTagScanningHandler();
-                else if (option == 4) WriteTagHandler();
-                else if (option == 5) ShowCurrentTagValuesHandler();
-                else if (option == 6) RegisterHandler();
-                else if (option == 7) LoginHandler();
-                else LogoutHandler();
+                else if (option == 1) await AddTagHandler();
+                else if (option == 2) await RemoveTagHandler();
+                else if (option == 3) await ChangeTagScanningHandler();
+                else if (option == 4) await WriteTagHandler();
+                else if (option == 5) await ShowCurrentTagValuesHandler();
+                else if (option == 6) await RegisterHandler();
+                else if (option == 7) await LoginHandler();
+                else await LogoutHandler();
             }
         }
 
@@ -50,13 +52,21 @@ namespace DatabaseManger
             Console.WriteLine("---------------------------------------");
         }
 
-        public void AddTagHandler() { }
-        public void RemoveTagHandler() { }
-        public void ChangeTagScanningHandler() { }
-        public void WriteTagHandler() { }
-        public void ShowCurrentTagValuesHandler() { }
-        public void RegisterHandler() { }
-        public void LoginHandler() { }
-        public void LogoutHandler() { }
+        public async Task AddTagHandler() { }
+
+        public async Task RemoveTagHandler()
+        {
+            DeleteTagDTO dto = new DeleteTagDTO();
+            dto.token = token;
+            Console.Write("Enter name of the tag to be deleted: ");
+            dto.TagName = Console.ReadLine();
+            await HttpManager.DeleteTag(dto);
+        }
+        public async Task ChangeTagScanningHandler() { }
+        public async Task WriteTagHandler() { }
+        public async Task ShowCurrentTagValuesHandler() { }
+        public async Task RegisterHandler() { }
+        public async Task LoginHandler() { }
+        public async Task LogoutHandler() { }
     }
 }
