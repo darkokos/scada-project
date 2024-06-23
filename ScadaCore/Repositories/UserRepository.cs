@@ -5,7 +5,7 @@ using ScadaCore.Models;
 namespace ScadaCore.Repositories;
 
 public class UserRepository(UserContext userContext) : IUserRepository {
-    public async Task<User?> GetUserByUsernameAsync(string username) {
+    public async Task<User?> GetUserAsync(string username) {
         return await userContext.Users.FirstOrDefaultAsync(user => user.Username == username);
     }
 
