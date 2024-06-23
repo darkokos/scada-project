@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ScadaCore.Data;
+﻿using ScadaCore.Data;
 using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
 
 public class TagLogRepository(ValueAndAlarmContext valueAndAlarmContext) : ITagLogRepository {
     public async Task<TagLog?> GetTagLogAsync(int id) {
-        return await valueAndAlarmContext.TagLogs.FirstOrDefaultAsync(tagLog => tagLog.Id == id);
+        return await valueAndAlarmContext.TagLogs.FindAsync(id);
     }
     
     public async Task<TagLog?> CreateTagLogAsync(TagLog tagLog) {
