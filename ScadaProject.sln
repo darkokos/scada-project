@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScadaCore", "ScadaCore\Scad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{53869317-42B7-4204-8B80-18CD237788A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseManager", "DatabaseManager\DatabaseManager.csproj", "{1476979E-B01C-4FE1-AF39-7F26CB878365}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{53869317-42B7-4204-8B80-18CD237788A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53869317-42B7-4204-8B80-18CD237788A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53869317-42B7-4204-8B80-18CD237788A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1476979E-B01C-4FE1-AF39-7F26CB878365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1476979E-B01C-4FE1-AF39-7F26CB878365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1476979E-B01C-4FE1-AF39-7F26CB878365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1476979E-B01C-4FE1-AF39-7F26CB878365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
