@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.DatabaseManagerCommon;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ScadaCore.Controllers;
 
@@ -12,6 +13,10 @@ public class DatabaseManagerController : ControllerBase
     {
         _logger = logger;
     }
-    
-    
+
+    [HttpPost("deleteTag")]
+    public IActionResult DeleteTag([FromBody] DeleteTagDTO dto)
+    {
+        return Ok("");
+    }
 }
