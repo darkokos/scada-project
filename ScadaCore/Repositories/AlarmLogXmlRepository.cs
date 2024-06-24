@@ -5,10 +5,10 @@ using ScadaCore.Models;
 namespace ScadaCore.Repositories;
 
 public class AlarmLogXmlRepository : IAlarmLogRepository {
-    private const string XmlFilePath = "~/Config/alarmConfig.xml";
+    private const string XmlFilePath = "~/Logs/alarmLog.xml";
 
     public AlarmLogXmlRepository() {
-        Directory.CreateDirectory("~/Config");
+        Directory.CreateDirectory("~/Logs");
         using var streamWriter = File.AppendText(XmlFilePath);
     }
 
@@ -33,12 +33,13 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
 
         var alarmLogXElement =
             new XElement(
-                alarmLog.Id.ToString(),
-                new XAttribute("alarmId", alarmLog.AlarmId),
-                new XAttribute("type", alarmLog.Type),
-                new XAttribute("valueName", alarmLog.ValueName),
-                new XAttribute("timestamp", alarmLog.Timestamp.ToString("dd/MM/yyyy"))
-                );
+                AlarmLog.GetXName(),
+                alarmLog.Id,
+                new XAttribute(AlarmLog.GetAlarmIdXAttributeName(), alarmLog.AlarmId),
+                new XAttribute(AlarmLog.GetTypeXAttributeName(), alarmLog.Type),
+                new XAttribute(AlarmLog.GetValueNameXAttributeName(), alarmLog.ValueName),
+                new XAttribute(AlarmLog.GetTimestampXAttributeName(), alarmLog.Timestamp.ToString("dd/MM/yyyy"))
+            );
         rootElement
             .Add(alarmLogXElement);
 
