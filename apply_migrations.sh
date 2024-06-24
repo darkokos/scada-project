@@ -2,7 +2,7 @@
 
 if ! command -v dotnet ef
 then
-  dotnet tool install --global dotnet-ef
+  dotnet tool install --global dotnet ef
 fi
 
 cd ScadaCore
