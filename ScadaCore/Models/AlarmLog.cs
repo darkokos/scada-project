@@ -17,21 +17,43 @@ public partial class AlarmLog {
     public string ValueName { get; set; }
     [Required] public DateTime Timestamp { get; set; }
 
+    public static string GetXName() {
+        return "alarmLog";
+    }
+    
+    public static string GetAlarmIdXAttributeName() {
+        return "alarmId";
+    }
+    
+    public static string GetTypeXAttributeName() {
+        return "type";
+    }
+    
+    public static string GetValueNameXAttributeName() {
+        return "valueName";
+    }
+    
+    public static string GetTimestampXAttributeName() {
+        return "timestamp";
+    }
+
     public AlarmLog(XElement alarmLogXElement) {
         Id = int.TryParse(alarmLogXElement.Value, out var value) ? value : -1;
-        AlarmId = int.TryParse(alarmLogXElement.Attribute("alarmId")?.Value, out var alarmId) ? alarmId : -1;
-        Type = Enum.TryParse(alarmLogXElement.Attribute("type")?.Value, out AlarmType type) ? type : AlarmType.High;
-        ValueName = alarmLogXElement.Attribute("valueName")?.Value ?? "";
-        Timestamp =
-            DateTime
-                .TryParseExact(
-                    alarmLogXElement.Attribute("timestamp")?.Value,
-                    "dd/MM/yyyy",
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,
-                    out var timestamp
-                )
-                ? timestamp
+        AlarmId =
+            int.TryParse(alarmLogXElement.Attribute(GetAlarmIdXAttributeName())?.Value, out var alarmId)
+                ? alarmId
+                : -1;
+        Type =
+            Enum.TryParse(alarmLogXElement.Attribute(GetTypeXAttributeName())?.Value, out AlarmType type)
+                ? type
                 : default;
+        ValueName = alarmLogXElement.Attribute(GetValueNameXAttributeName())?.Value ?? "";
+        Timestamp = DateTime.TryParseExact(
+            alarmLogXElement.Attribute(GetTimestampXAttributeName())?.Value,
+            "dd/MM/yyyy",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out var timestamp
+        ) ? timestamp : default;
     }
 }
