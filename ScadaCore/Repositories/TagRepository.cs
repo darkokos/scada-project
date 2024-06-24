@@ -9,7 +9,19 @@ public class TagRepository : ITagRepository {
 
     public TagRepository() {
         Directory.CreateDirectory("~/Config");
-        using var streamWriter = File.AppendText(XmlFilePath);
+        if (File.Exists(XmlFilePath))
+            return;
+        
+        var scadaConfigTemplate =
+            new XElement(
+                Tag.GetRootXElementName(),
+                new XElement(AnalogInputTag.GetParentXElementName()),
+                new XElement(AnalogOutputTag.GetParentXElementName()),
+                new XElement(DigitalInputTag.GetParentXElementName()),
+                new XElement(DigitalOutputTag.GetParentXElementName())
+            );
+        using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        scadaConfigTemplate.Save(xmlWriter);
     }
     
     private static async Task<XElement> GetRootElement() {

@@ -17,6 +17,10 @@ public partial class AlarmLog {
     public string ValueName { get; set; }
     [Required] public DateTime Timestamp { get; set; }
 
+    public static string GetParentXElementName() {
+        return "alarmLogs";
+    }
+    
     public static string GetXName() {
         return "alarmLog";
     }

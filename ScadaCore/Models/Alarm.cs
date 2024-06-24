@@ -28,6 +28,10 @@ public partial class Alarm {
     [StringLength(10, MinimumLength = 1, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
     public string ValueName { get; set; }
 
+    public static string GetParentXElementName() {
+        return "alarms";
+    }
+
     public static string GetXName() {
         return "alarm";
     }
