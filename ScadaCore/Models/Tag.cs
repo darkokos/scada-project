@@ -23,6 +23,10 @@ public partial class Tag {
                 : -1;
     }
 
+    public static string GetRootXElementName() {
+        return "tags";
+    }
+
     public static string GetNameXElementName() {
         return "name";
     }

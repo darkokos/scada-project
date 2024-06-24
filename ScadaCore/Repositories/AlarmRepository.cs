@@ -9,7 +9,12 @@ public class AlarmRepository : IAlarmRepository {
     
     public AlarmRepository() {
         Directory.CreateDirectory("~/Config");
-        using var streamWriter = File.AppendText(XmlFilePath);
+        if (File.Exists(XmlFilePath))
+            return;
+        
+        var alarmConfigTemplate = new XElement(Alarm.GetParentXElementName());
+        using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        alarmConfigTemplate.Save(xmlWriter);
     }
     
     private static async Task<XElement> GetRootElement() {
