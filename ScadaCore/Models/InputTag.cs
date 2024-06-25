@@ -14,14 +14,7 @@ public partial class InputTag : Tag {
     // whether it will be necessary at all
     [Required] public int ScanTime { get; set; }
     [Required] public bool IsScanned { get; set; }
-
-    protected InputTag(XContainer inputTagXElement) : base(inputTagXElement) {
-        Driver = inputTagXElement.Element("driver")?.Value ?? "";
-        ScanTime = int.TryParse(inputTagXElement.Element("scanTime")?.Value, out var scanTime) ? scanTime : -1;
-        IsScanned =
-            bool.TryParse(inputTagXElement.Element("isScanned")?.Value, out var isScanned) && isScanned;
-    }
-
+    
     private static string GetDriverXElementName() {
         return "driver";
     }
@@ -32,6 +25,16 @@ public partial class InputTag : Tag {
     
     private static string GetIsScannedXElementName() {
         return "isScanned";
+    }
+
+    protected InputTag(XContainer inputTagXElement) : base(inputTagXElement) {
+        Driver = inputTagXElement.Element(GetDriverXElementName())?.Value ?? "";
+        ScanTime = int.TryParse(inputTagXElement.Element(GetScanTimeXElementName())?.Value, out var scanTime)
+            ? scanTime
+            : -1;
+        IsScanned =
+            bool.TryParse(inputTagXElement.Element(GetIsScannedXElementName())?.Value, out var isScanned)
+            && isScanned;
     }
 
     protected new void SetXAttributes(XElement xElement) {

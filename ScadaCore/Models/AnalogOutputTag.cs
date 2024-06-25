@@ -13,25 +13,6 @@ public partial class AnalogOutputTag : OutputTag {
     // TODO: Units
     public HashSet<string> Units { get; set; }
 
-    public AnalogOutputTag(XContainer analogOutputTagXElement) : base(analogOutputTagXElement) {
-        LowLimit =
-            int.TryParse(analogOutputTagXElement.Element("lowLimit")?.Value, out var lowLimit) ? lowLimit : -1;
-        HighLimit =
-            int.TryParse(analogOutputTagXElement.Element("highLimit")?.Value, out var highLimit) ? highLimit : -1;
-        Units = new HashSet<string>();
-        foreach (var unit in analogOutputTagXElement
-                     .Element("units")?
-                     .Elements("unit") ?? new List<XElement>()) {
-            Units.Add(unit.Value);
-        }
-    }
-    
-    public static string GetParentXElementName() {
-        return "analogOutputTags";
-    }
-
-    public const string GetXName = "analogOutputTag";
-
     private static string GetLowLimitXElementName() {
         return "lowLimit";
     }
@@ -48,6 +29,29 @@ public partial class AnalogOutputTag : OutputTag {
         return "unit";
     }
     
+    public AnalogOutputTag(XContainer analogOutputTagXElement) : base(analogOutputTagXElement) {
+        LowLimit =
+            int.TryParse(analogOutputTagXElement.Element(GetLowLimitXElementName())?.Value, out var lowLimit)
+                ? lowLimit
+                : -1;
+        HighLimit =
+            int.TryParse(analogOutputTagXElement.Element(GetHighLimitXElementName())?.Value, out var highLimit)
+                ? highLimit
+                : -1;
+        Units = new HashSet<string>();
+        foreach (var unit in analogOutputTagXElement
+                     .Element(GetUnitsXElementName())?
+                     .Elements(GetUnitXElementName()) ?? new List<XElement>()) {
+            Units.Add(unit.Value);
+        }
+    }
+    
+    public static string GetParentXElementName() {
+        return "analogOutputTags";
+    }
+
+    public const string GetXName = "analogOutputTag";
+
     public XElement GetXElementRepresentation() {
         var unitsXElement = new XElement(GetUnitsXElementName());
         foreach (var unit in Units) {

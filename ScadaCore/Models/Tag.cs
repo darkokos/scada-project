@@ -14,19 +14,6 @@ public partial class Tag {
     // TODO: Change the type of this when known
     [Required] public int InputOutputAddress { get; set; }
 
-    protected Tag(XContainer tagXElement) {
-        Name = tagXElement.Element("name")?.Value ?? "";
-        Description = tagXElement.Element("description")?.Value ?? "";
-        InputOutputAddress =
-            int.TryParse(tagXElement.Element("inputOutputAddress")?.Value, out var inputOutputAddress)
-                ? inputOutputAddress
-                : -1;
-    }
-
-    public static string GetRootXElementName() {
-        return "tags";
-    }
-
     public static string GetNameXElementName() {
         return "name";
     }
@@ -37,6 +24,20 @@ public partial class Tag {
     
     private static string GetInputOutputAddressXElementName() {
         return "inputOutputAddress";
+    }
+
+    protected Tag(XContainer tagXElement) {
+        Name = tagXElement.Element(GetNameXElementName())?.Value ?? "";
+        Description = tagXElement.Element(GetDescriptionXElementName())?.Value ?? "";
+        InputOutputAddress =
+            int.TryParse(
+                tagXElement.Element(GetInputOutputAddressXElementName())?.Value,
+                out var inputOutputAddress
+            ) ? inputOutputAddress : -1;
+    }
+
+    public static string GetRootXElementName() {
+        return "tags";
     }
 
     protected void SetXAttributes(XElement xElement) {

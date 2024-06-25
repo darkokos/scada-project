@@ -42,6 +42,7 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
                 alarmLog.Id,
                 new XAttribute(AlarmLog.GetAlarmIdXAttributeName(), alarmLog.AlarmId),
                 new XAttribute(AlarmLog.GetTypeXAttributeName(), alarmLog.Type),
+                new XAttribute(AlarmLog.GetPriorityXAttributeName(), alarmLog.Priority),
                 new XAttribute(AlarmLog.GetValueNameXAttributeName(), alarmLog.ValueName),
                 new XAttribute(AlarmLog.GetTimestampXAttributeName(), alarmLog.Timestamp.ToString("dd/MM/yyyy"))
             );
