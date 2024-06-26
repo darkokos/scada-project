@@ -3,7 +3,6 @@ using Lombok.NET;
 
 namespace ScadaCore.Models;
 
-// TODO: Conclude whether this needs to exist later, when known
 [NoArgsConstructor]
 public partial class DigitalInputTag : InputTag {
     public DigitalInputTag(XContainer digitalInputTagXElement) : base(digitalInputTagXElement) { }

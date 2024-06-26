@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Lombok.NET;
 
 namespace ScadaCore.Models;
@@ -18,15 +17,10 @@ public enum AlarmPriority {
 [NoArgsConstructor]
 public partial class Alarm {
     public int Id { get; set; }
-    [Required] public AlarmType Type { get; set; } 
-    [Required] public AlarmPriority Priority { get; set; }
-    
-    // TODO: I am not certain about anything after this point
-    [Required] public int Threshold { get; set; }
-    
-    [Required]
-    [StringLength(10, MinimumLength = 1, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
-    public string ValueName { get; set; }
+    public AlarmType Type { get; set; } 
+    public AlarmPriority Priority { get; set; }
+    public decimal Threshold { get; set; }
+    public string Unit { get; set; }
 
     public static string GetParentXElementName() {
         return "alarms";
@@ -48,8 +42,8 @@ public partial class Alarm {
         return "threshold";
     }
     
-    public static string GetValueNameXAttributeName() {
-        return "valueName";
+    public static string GetUnitXAttributeName() {
+        return "unit";
     }
 
     public Alarm(XElement alarmXElement) {
@@ -63,9 +57,9 @@ public partial class Alarm {
             out AlarmPriority alarmPriority
         ) ? alarmPriority : default;
         Threshold =
-            int.TryParse(alarmXElement.Attribute(GetThresholdXAttributeName())?.Value, out var threshold)
+            decimal.TryParse(alarmXElement.Attribute(GetThresholdXAttributeName())?.Value, out var threshold)
                 ? threshold
                 : -1;
-        ValueName = alarmXElement.Attribute(GetValueNameXAttributeName())?.Value ?? "";
+        Unit = alarmXElement.Attribute(GetUnitXAttributeName())?.Value ?? "";
     }
 }

@@ -10,11 +10,11 @@ public partial class AlarmLog {
     [Key] public int Id { get; set; }
     [Required] public int AlarmId { get; set; }
     [Required] public AlarmType Type { get; set; }
+    [Required] public AlarmPriority Priority { get; set; }
     
-    // TODO: Change the type of ValueName, once known
     [Required]
     [StringLength(10, MinimumLength = 1, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
-    public string ValueName { get; set; }
+    public string Unit { get; set; }
     [Required] public DateTime Timestamp { get; set; }
 
     public static string GetParentXElementName() {
@@ -32,9 +32,13 @@ public partial class AlarmLog {
     public static string GetTypeXAttributeName() {
         return "type";
     }
+
+    public static string GetPriorityXAttributeName() {
+        return "priority";
+    }
     
-    public static string GetValueNameXAttributeName() {
-        return "valueName";
+    public static string GetUnitXAttributeName() {
+        return "unit";
     }
     
     public static string GetTimestampXAttributeName() {
@@ -51,7 +55,11 @@ public partial class AlarmLog {
             Enum.TryParse(alarmLogXElement.Attribute(GetTypeXAttributeName())?.Value, out AlarmType type)
                 ? type
                 : default;
-        ValueName = alarmLogXElement.Attribute(GetValueNameXAttributeName())?.Value ?? "";
+        Priority =
+            Enum.TryParse(alarmLogXElement.Attribute(GetPriorityXAttributeName())?.Value, out AlarmPriority priority)
+                ? priority
+                : default;
+        Unit = alarmLogXElement.Attribute(GetUnitXAttributeName())?.Value ?? "";
         Timestamp = DateTime.TryParseExact(
             alarmLogXElement.Attribute(GetTimestampXAttributeName())?.Value,
             "dd/MM/yyyy",

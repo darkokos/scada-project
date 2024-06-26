@@ -50,7 +50,7 @@ public class AlarmRepository : IAlarmRepository {
                 new XAttribute(Alarm.GetTypeXAttributeName(), alarm.Type),
                 new XAttribute(Alarm.GetPriorityXAttributeName(), alarm.Priority),
                 new XAttribute(Alarm.GetThresholdXAttributeName(), alarm.Threshold),
-                new XAttribute(Alarm.GetValueNameXAttributeName(), alarm.ValueName)
+                new XAttribute(Alarm.GetUnitXAttributeName(), alarm.Unit)
             );
         rootElement.Add(alarmXElement);
         

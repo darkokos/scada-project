@@ -5,32 +5,14 @@ namespace ScadaCore.Models;
 
 [NoArgsConstructor]
 public partial class AnalogOutputTag : OutputTag {
+    public decimal InitialValue { get; set; }
+    public decimal LowLimit { get; set; }
+    public decimal HighLimit { get; set; }
+    public string Unit { get; set; }
     
-    // TODO: Types
-    public int LowLimit { get; set; }
-    public int HighLimit { get; set; }
-    
-    // TODO: Units
-    public HashSet<string> Units { get; set; }
-
-    public AnalogOutputTag(XContainer analogOutputTagXElement) : base(analogOutputTagXElement) {
-        LowLimit =
-            int.TryParse(analogOutputTagXElement.Element("lowLimit")?.Value, out var lowLimit) ? lowLimit : -1;
-        HighLimit =
-            int.TryParse(analogOutputTagXElement.Element("highLimit")?.Value, out var highLimit) ? highLimit : -1;
-        Units = new HashSet<string>();
-        foreach (var unit in analogOutputTagXElement
-                     .Element("units")?
-                     .Elements("unit") ?? new List<XElement>()) {
-            Units.Add(unit.Value);
-        }
+    private static string GetInitialValueXElementName() {
+        return "initialValue";
     }
-    
-    public static string GetParentXElementName() {
-        return "analogOutputTags";
-    }
-
-    public const string GetXName = "analogOutputTag";
 
     private static string GetLowLimitXElementName() {
         return "lowLimit";
@@ -40,24 +22,39 @@ public partial class AnalogOutputTag : OutputTag {
         return "highLimit";
     }
     
-    private static string GetUnitsXElementName() {
-        return "units";
-    }
-    
     private static string GetUnitXElementName() {
         return "unit";
     }
     
+    public AnalogOutputTag(XContainer analogOutputTagXElement) : base(analogOutputTagXElement) {
+        InitialValue = decimal.TryParse(
+            analogOutputTagXElement.Element(GetInitialValueXElementName())?.Value,
+            out var initialValue
+        ) ? initialValue : -1;
+        LowLimit = decimal.TryParse(
+            analogOutputTagXElement.Element(GetLowLimitXElementName())?.Value,
+            out var lowLimit
+        ) ? lowLimit : -1;
+        HighLimit = decimal.TryParse(
+            analogOutputTagXElement.Element(GetHighLimitXElementName())?.Value,
+            out var highLimit
+        ) ? highLimit : -1;
+        Unit = analogOutputTagXElement.Element(GetUnitXElementName())?.Value ?? "";
+    }
+    
+    public static string GetParentXElementName() {
+        return "analogOutputTags";
+    }
+
+    public const string GetXName = "analogOutputTag";
+
     public XElement GetXElementRepresentation() {
-        var unitsXElement = new XElement(GetUnitsXElementName());
-        foreach (var unit in Units) {
-            unitsXElement.Add(new XElement(GetUnitXElementName(), unit));
-        }
         var xElementRepresentation = new XElement(
             GetXName,
+            new XElement(GetInitialValueXElementName(), InitialValue),
             new XElement(GetLowLimitXElementName(), LowLimit),
             new XElement(GetHighLimitXElementName(), HighLimit),
-            unitsXElement
+            new XElement(GetUnitXElementName(), Unit)
         );
         
         SetXAttributes(xElementRepresentation);

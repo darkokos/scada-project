@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Lombok.NET;
 
 namespace ScadaCore.Models;
@@ -7,25 +6,8 @@ namespace ScadaCore.Models;
 [NoArgsConstructor]
 public partial class Tag {
     public string Name { get; set; }
-    
-    [StringLength(250, MinimumLength = 0, ErrorMessage = "{0} should be between {2} and {1} characters long.")]
     public string Description { get; set; }
-    
-    // TODO: Change the type of this when known
-    [Required] public int InputOutputAddress { get; set; }
-
-    protected Tag(XContainer tagXElement) {
-        Name = tagXElement.Element("name")?.Value ?? "";
-        Description = tagXElement.Element("description")?.Value ?? "";
-        InputOutputAddress =
-            int.TryParse(tagXElement.Element("inputOutputAddress")?.Value, out var inputOutputAddress)
-                ? inputOutputAddress
-                : -1;
-    }
-
-    public static string GetRootXElementName() {
-        return "tags";
-    }
+    public int InputOutputAddress { get; set; }
 
     public static string GetNameXElementName() {
         return "name";
@@ -37,6 +19,20 @@ public partial class Tag {
     
     private static string GetInputOutputAddressXElementName() {
         return "inputOutputAddress";
+    }
+
+    protected Tag(XContainer tagXElement) {
+        Name = tagXElement.Element(GetNameXElementName())?.Value ?? "";
+        Description = tagXElement.Element(GetDescriptionXElementName())?.Value ?? "";
+        InputOutputAddress =
+            int.TryParse(
+                tagXElement.Element(GetInputOutputAddressXElementName())?.Value,
+                out var inputOutputAddress
+            ) ? inputOutputAddress : -1;
+    }
+
+    public static string GetRootXElementName() {
+        return "tags";
     }
 
     protected void SetXAttributes(XElement xElement) {
