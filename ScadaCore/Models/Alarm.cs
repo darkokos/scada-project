@@ -20,9 +20,7 @@ public partial class Alarm {
     public AlarmType Type { get; set; } 
     public AlarmPriority Priority { get; set; }
     public decimal Threshold { get; set; }
-    
-    // TODO: ValueName?
-    public string ValueName { get; set; }
+    public string Unit { get; set; }
 
     public static string GetParentXElementName() {
         return "alarms";
@@ -44,8 +42,8 @@ public partial class Alarm {
         return "threshold";
     }
     
-    public static string GetValueNameXAttributeName() {
-        return "valueName";
+    public static string GetUnitXAttributeName() {
+        return "unit";
     }
 
     public Alarm(XElement alarmXElement) {
@@ -62,6 +60,6 @@ public partial class Alarm {
             decimal.TryParse(alarmXElement.Attribute(GetThresholdXAttributeName())?.Value, out var threshold)
                 ? threshold
                 : -1;
-        ValueName = alarmXElement.Attribute(GetValueNameXAttributeName())?.Value ?? "";
+        Unit = alarmXElement.Attribute(GetUnitXAttributeName())?.Value ?? "";
     }
 }
