@@ -5,6 +5,11 @@ using ScadaCore.Services;
 
 namespace ScadaCore;
 
+public class UserState
+{
+    public Dictionary<string, string> Data { get; } = new Dictionary<string, string>();
+}
+
 public class Program
 {
     public static void Main(string[] args)
@@ -25,6 +30,7 @@ public class Program
         
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddSingleton<UserState>();
 
         var app = builder.Build();
 

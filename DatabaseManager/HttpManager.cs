@@ -102,7 +102,7 @@ public class HttpManager
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 Console.WriteLine("Successfully logged in.");
-                return await response.Content.ReadAsStringAsync();;
+                return await response.Content.ReadAsStringAsync();
             }
             else
             {

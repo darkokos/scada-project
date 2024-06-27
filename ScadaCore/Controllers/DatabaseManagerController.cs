@@ -11,10 +11,12 @@ public class DatabaseManagerController : ControllerBase
 {
     private readonly ILogger<DatabaseManagerController> _logger;
     private IUserService userService;
+    private UserState userState;
 
-    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService)
+    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState)
     {
         _logger = logger;
+        this.userState = userState;
         this.userService = userService;
     }
 
@@ -41,4 +43,18 @@ public class DatabaseManagerController : ControllerBase
         
         return Ok("");
     }
+    
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginDTO dto)
+    {
+        var task = userService.GetUserAsync(dto.username);
+        task.Wait();
+        var existing_user = task.Result;
+
+        if (existing_user == null) return BadRequest("");
+        string id = Guid.NewGuid().ToString();
+        this.userState.Data[dto.username] = id;
+        return Ok(id);
+    }
+    
 }
