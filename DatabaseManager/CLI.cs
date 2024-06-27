@@ -3,7 +3,8 @@ using Common.DatabaseManagerCommon;
 
 public class CLI
 {
-    public string token = "asddasasd";
+    public string token = "";
+    public string username = "";
     public void Start()
     {
         while (true)
@@ -40,8 +41,12 @@ public class CLI
             Console.WriteLine("(4) Write Tag Output Value");
             Console.WriteLine("(5) Show Current Tag Values");
         }
-        Console.WriteLine("(6) Register");
-        Console.WriteLine("(7) Login");
+        else
+        {
+            Console.WriteLine("(6) Register");
+            Console.WriteLine("(7) Login");
+        }
+
                 
         if (this.token != "") Console.WriteLine("(8) Logout");
 
@@ -134,17 +139,16 @@ public class CLI
         var task = HttpManager.Login(dto);
         task.Wait();
         this.token = task.Result;
+        this.username = dto.username;
     }
 
     public void LogoutHandler()
     {
         LogoutDTO dto = new LogoutDTO();
-            
-        Console.Write("Enter your username: ");
-        dto.username = Console.ReadLine().Trim();
         dto.token = token;
-
+        dto.username = username;
         HttpManager.Logout(dto).Wait();
         this.token = "";
+        this.username = "";
     }
 }
