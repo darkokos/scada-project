@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlarmDisplay", "AlarmDispla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trending", "Trending\Trending.csproj", "{3E640DDF-5F62-4CA8-B1DF-ECC74F6805A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealTimeUnit", "RealTimeUnit\RealTimeUnit.csproj", "{D6FF90B4-82FE-4617-BE9A-F1F8BE08FDFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{3E640DDF-5F62-4CA8-B1DF-ECC74F6805A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E640DDF-5F62-4CA8-B1DF-ECC74F6805A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E640DDF-5F62-4CA8-B1DF-ECC74F6805A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6FF90B4-82FE-4617-BE9A-F1F8BE08FDFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6FF90B4-82FE-4617-BE9A-F1F8BE08FDFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6FF90B4-82FE-4617-BE9A-F1F8BE08FDFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6FF90B4-82FE-4617-BE9A-F1F8BE08FDFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
