@@ -8,7 +8,7 @@ public class AlarmService : IAlarmService {
     }
 
     public async Task<Alarm> CreateAlarmAsync(Alarm alarm) {
-        return new Alarm();
+        return null;
     }
 
     public async Task<bool> DeleteAlarmAsync(Alarm alarm) {
