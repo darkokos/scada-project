@@ -57,4 +57,12 @@ public class DatabaseManagerController : ControllerBase
         return Ok(id);
     }
     
+    [HttpPost("logout")]
+    public IActionResult Logout([FromBody] LogoutDTO dto)
+    {
+        if (!this.userState.Data.ContainsKey(dto.username)) return BadRequest("");
+        if (this.userState.Data[dto.username] != dto.token) return BadRequest("");
+        this.userState.Data.Remove(dto.username);
+        return Ok("");
+    }
 }
