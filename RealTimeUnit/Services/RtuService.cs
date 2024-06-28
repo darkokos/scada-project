@@ -1,4 +1,5 @@
-﻿using Common.RealTimeUnit;
+﻿using System.Text;
+using Common.RealTimeUnit;
 using Newtonsoft.Json;
 
 namespace RealTimeUnit.Services;
@@ -49,5 +50,27 @@ public static class RtuService {
         }
         
         return JsonConvert.DeserializeObject<DigitalOutputUnitDto>(await response.Content.ReadAsStringAsync());
+    }
+
+    public static async Task<AnalogTagLogDto?> SendAnalogValue(AnalogValueDto dto) {
+        var requestContent =
+            new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+        HttpResponseMessage response;
+        using (var httpClient = new HttpClient()) {
+            response = await httpClient.PostAsync($"{RtuControllerUrl}/analog", requestContent);
+        }
+
+        return JsonConvert.DeserializeObject<AnalogTagLogDto>(await response.Content.ReadAsStringAsync());
+    }
+    
+    public static async Task<DigitalTagLogDto?> SendDigitalValue(DigitalValueDto dto) {
+        var requestContent =
+            new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+        HttpResponseMessage response;
+        using (var httpClient = new HttpClient()) {
+            response = await httpClient.PostAsync($"{RtuControllerUrl}/digital", requestContent);
+        }
+
+        return JsonConvert.DeserializeObject<DigitalTagLogDto>(await response.Content.ReadAsStringAsync());
     }
 }
