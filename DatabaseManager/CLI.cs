@@ -60,6 +60,7 @@ public class CLI
     {
         DeleteTagDTO dto = new DeleteTagDTO();
         dto.token = token;
+        dto.username = username;
         Console.Write("Enter name of the tag to be deleted: ");
         dto.TagName = Console.ReadLine().Trim();
         HttpManager.DeleteTag(dto).Wait();

@@ -30,6 +30,8 @@ public class Program
         
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ITagService, TagService>();
+        builder.Services.AddScoped<ITagRepository, TagRepository>();
         builder.Services.AddSingleton<UserState>();
 
         var app = builder.Build();

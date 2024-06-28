@@ -11,18 +11,29 @@ public class DatabaseManagerController : ControllerBase
 {
     private readonly ILogger<DatabaseManagerController> _logger;
     private IUserService userService;
+    private ITagService tagService;
     private UserState userState;
 
-    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState)
+    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState, ITagService tagService)
     {
         _logger = logger;
         this.userState = userState;
         this.userService = userService;
+        this.tagService = tagService;
     }
 
     [HttpPost("deleteTag")]
     public IActionResult DeleteTag([FromBody] DeleteTagDTO dto)
     {
+        if (userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        var getTagTask = this.tagService.GetTagAsync(dto.TagName);
+        getTagTask.Wait();
+        var tag = getTagTask.Result;
+        if (tag == null) return BadRequest("");
+
+        var task = this.tagService.DeleteTagAsync(tag);
+        task.Wait();
+        
         return Ok("");
     }
 
@@ -51,7 +62,7 @@ public class DatabaseManagerController : ControllerBase
         task.Wait();
         var existing_user = task.Result;
 
-        if (existing_user == null) return BadRequest("");
+        if (existing_user == null || existing_user.Password != dto.password) return BadRequest("");
         string id = Guid.NewGuid().ToString();
         this.userState.Data[dto.username] = id;
         return Ok(id);
