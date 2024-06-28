@@ -32,6 +32,8 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ITagService, TagService>();
         builder.Services.AddScoped<ITagRepository, TagRepository>();
+        builder.Services.AddScoped<ITagLogService, TagLogService>();
+        builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
         builder.Services.AddSingleton<UserState>();
 
         var app = builder.Build();

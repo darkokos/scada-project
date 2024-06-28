@@ -13,12 +13,14 @@ public class DatabaseManagerController : ControllerBase
     private IUserService userService;
     private ITagService tagService;
     private UserState userState;
+    private ITagLogService TagLogService;
 
-    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState, ITagService tagService)
+    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState, ITagService tagService, ITagLogService tagLogService)
     {
         _logger = logger;
         this.userState = userState;
         this.userService = userService;
+        this.TagLogService = tagLogService;
         this.tagService = tagService;
     }
 
@@ -80,7 +82,7 @@ public class DatabaseManagerController : ControllerBase
     [HttpPost("changeTagScanning")]
     public IActionResult ChangeTagScanning([FromBody] ChangeScanTagDTO dto)
     {
-        if (userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         var getTagTask = this.tagService.GetTagAsync(dto.TagName);
         getTagTask.Wait();
         var tag = getTagTask.Result;
@@ -89,5 +91,31 @@ public class DatabaseManagerController : ControllerBase
         inputTag.IsScanned = dto.state;
         // TODO: write update
         return Ok("");
+    }
+    
+    [HttpPost("currentTagValues")]
+    public IActionResult currentTagValues([FromBody] ShowCurrentTagValuesDTO dto)
+    {
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        var getTags = tagService.GetAllInputTags();
+        getTags.Wait();
+        var tags = getTags.Result;
+        _logger.LogInformation(tags.Count.ToString());
+        String res = "";
+        foreach (String tag in tags)
+        {
+            _logger.LogInformation(tag);
+            res += tag;
+            res += " - ";
+            
+            var task = TagLogService.GetLatestLog(tag);
+            task.Wait();
+            var log = task.Result;
+            if (log == null) res += "/";
+            else res += log.EmittedValue;
+            
+            res += "\n";
+        }
+        return Ok(res);
     }
 }

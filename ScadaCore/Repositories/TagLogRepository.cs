@@ -12,4 +12,12 @@ public class TagLogRepository(ValueAndAlarmContext valueAndAlarmContext) : ITagL
         var savedTagLog = await valueAndAlarmContext.TagLogs.AddAsync(tagLog);
         return await valueAndAlarmContext.SaveChangesAsync() >= 0 ? savedTagLog.Entity : null;
     }
+    
+    public async Task<TagLog?> GetLatestLog(String tagName)
+    {
+        var logs = valueAndAlarmContext.TagLogs.Where(log => log.TagName == tagName);
+            return logs
+            .OrderByDescending(item => item.Timestamp)
+            .FirstOrDefault();
+    }
 }

@@ -1,5 +1,7 @@
-﻿using System.Xml;
+﻿using System.Collections.ObjectModel;
+using System.Xml;
 using System.Xml.Linq;
+using Microsoft.VisualBasic;
 using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
@@ -25,7 +27,7 @@ public class TagRepository : ITagRepository {
     }
     
     private static async Task<XElement> GetRootElement() {
-        using var xmlReader = XmlReader.Create(XmlFilePath);
+        using var xmlReader = XmlReader.Create(XmlFilePath, new XmlReaderSettings{ Async = true});
         return await XElement.LoadAsync(xmlReader, LoadOptions.None, CancellationToken.None);
     }
     
@@ -120,5 +122,19 @@ public class TagRepository : ITagRepository {
 
         await SaveXElementAsync(rootElement);
         return true;
+    }
+    public async Task<Collection<String>> GetAllInputTags()
+    {
+        var rootElement = await GetRootElement();
+        var tagTypes =
+            new [] {
+                AnalogInputTag.GetXName,
+                DigitalInputTag.GetXName
+            };
+        var tagsXElements =
+            rootElement.Descendants().Where(descendant => tagTypes.Contains(descendant.Name.LocalName));
+        Collection<String> res = new Collection<String>();
+        foreach (var tagXElement in tagsXElements) res.Add(tagXElement.Element(Tag.GetNameXElementName())?.Value);
+        return res;
     }
 }

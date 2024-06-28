@@ -94,7 +94,7 @@ public class CLI
     {
         WriteTagValueDTO dto = new WriteTagValueDTO();
         dto.token = token;
-        Console.Write("Enter name of the tag to be deleted: ");
+        Console.Write("Enter name of the tag: ");
         dto.TagName = Console.ReadLine().Trim();
 
         while (true)
@@ -114,7 +114,15 @@ public class CLI
     }
         
     // TODO
-    public void ShowCurrentTagValuesHandler() { }
+    public void ShowCurrentTagValuesHandler()
+    {
+        var dto = new ShowCurrentTagValuesDTO();
+        dto.token = token;
+        dto.username = username;
+        var task = HttpManager.GetCurrentTagValues(dto);
+        task.Wait();
+        Console.WriteLine(task.Result);
+    }
 
     public void RegisterHandler()
     {

@@ -18,7 +18,7 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
     }
 
     private static async Task<XElement> GetRootElement() {
-        using var xmlReader = XmlReader.Create(XmlFilePath);
+        using var xmlReader = XmlReader.Create(XmlFilePath, new XmlReaderSettings{ Async = true});
         return await XElement.LoadAsync(xmlReader, LoadOptions.None, CancellationToken.None);
     }
     

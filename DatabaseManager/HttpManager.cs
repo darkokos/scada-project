@@ -61,12 +61,14 @@ public class HttpManager
         }
     }
         
-    public static async Task<string> GetCurrentTagValues() {
+    public static async Task<string> GetCurrentTagValues(ShowCurrentTagValuesDTO dto) {
         using (HttpClient client = new HttpClient())
         {
-            HttpResponseMessage response = await client.GetAsync(ServerUrl + "currentTagValues");
+            string body = JsonConvert.SerializeObject(dto);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(ServerUrl + "currentTagValues", content);
             if (response.StatusCode != HttpStatusCode.OK) {
-                Console.WriteLine("Error writing tag output value - status code: " + response.StatusCode);
+                Console.WriteLine("Error getting current tag values - status code: " + response.StatusCode);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseBody);
                 return "";
