@@ -76,4 +76,18 @@ public class DatabaseManagerController : ControllerBase
         this.userState.Data.Remove(dto.username);
         return Ok("");
     }
+    
+    [HttpPost("changeTagScanning")]
+    public IActionResult ChangeTagScanning([FromBody] ChangeScanTagDTO dto)
+    {
+        if (userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        var getTagTask = this.tagService.GetTagAsync(dto.TagName);
+        getTagTask.Wait();
+        var tag = getTagTask.Result;
+        if (tag == null) return BadRequest("");
+        var inputTag = (InputTag)tag;
+        inputTag.IsScanned = dto.state;
+        // TODO: write update
+        return Ok("");
+    }
 }

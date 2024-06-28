@@ -70,6 +70,7 @@ public class CLI
     {
         ChangeScanTagDTO dto = new ChangeScanTagDTO();
         dto.token = token;
+        dto.username = username;
         Console.Write("Enter name of the tag to be deleted: ");
         dto.TagName = Console.ReadLine().Trim();
 
