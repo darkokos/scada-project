@@ -151,7 +151,7 @@ public class CLI
 
         bool isSimulated;
         while (true) {
-            Console.Write("Is tag simulated: ");
+            Console.Write("Is tag simulated (true/false): ");
             string input = Console.ReadLine().Trim();
             if (!bool.TryParse(input, out isSimulated)) Console.WriteLine("Malformed input, try again!");
             else break;
@@ -160,7 +160,7 @@ public class CLI
         
         bool isScanned;
         while (true) {
-            Console.Write("Is tag scanned: ");
+            Console.Write("Is tag scanned (true/false): ");
             string input = Console.ReadLine().Trim();
             if (!bool.TryParse(input, out isScanned)) Console.WriteLine("Malformed input, try again!");
             else break;
@@ -219,7 +219,7 @@ public class CLI
 
         bool isSimulated;
         while (true) {
-            Console.Write("Is tag simulated: ");
+            Console.Write("Is tag simulated (true/false): ");
             string input = Console.ReadLine().Trim();
             if (!bool.TryParse(input, out isSimulated)) Console.WriteLine("Malformed input, try again!");
             else break;
@@ -228,7 +228,7 @@ public class CLI
         
         bool isScanned;
         while (true) {
-            Console.Write("Is tag scanned: ");
+            Console.Write("Is tag scanned (true/false): ");
             string input = Console.ReadLine().Trim();
             if (!bool.TryParse(input, out isScanned)) Console.WriteLine("Malformed input, try again!");
             else break;
@@ -264,7 +264,7 @@ public class CLI
 
         bool intialValue;
         while (true) {
-            Console.Write("Enter tag initial value: ");
+            Console.Write("Enter tag initial value (true/false): ");
             string input = Console.ReadLine().Trim();
             if (!bool.TryParse(input, out intialValue)) Console.WriteLine("Malformed input, try again!");
             else break;
@@ -289,7 +289,7 @@ public class CLI
         ChangeScanTagDTO dto = new ChangeScanTagDTO();
         dto.token = token;
         dto.username = username;
-        Console.Write("Enter name of the tag to be deleted: ");
+        Console.Write("Enter name of the tag to change scanning: ");
         dto.TagName = Console.ReadLine().Trim();
 
         while (true)

@@ -48,7 +48,6 @@ public class DatabaseManagerController : ControllerBase
         task.Wait();
         var existing_user = task.Result;
         if (existing_user != null) return BadRequest("User already exists!");
-        if (existing_user == null) _logger.LogInformation("ker");
 
         User user = new User();
         user.Username = dto.username;
@@ -97,6 +96,7 @@ public class DatabaseManagerController : ControllerBase
         var deleteTask = tagService.DeleteTagAsync(tag);
         deleteTask.Wait();
         var createTask = tagService.CreateTagAsync(tag);
+        createTask.Wait();
         
         return Ok("");
     }
