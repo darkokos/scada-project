@@ -62,4 +62,12 @@ public partial class Alarm {
                 : -1;
         Unit = alarmXElement.Attribute(GetUnitXAttributeName())?.Value ?? "";
     }
+
+    public Alarm(AlarmType type, AlarmPriority priority, decimal threshold, string unit)
+    {
+        Type = type;
+        Priority = priority;
+        Threshold = threshold;
+        Unit = unit;
+    }
 }

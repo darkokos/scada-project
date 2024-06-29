@@ -14,7 +14,7 @@ public class CLI
             while (true) {
                 Console.Write("> ");
                 string input = Console.ReadLine();
-                if (int.TryParse(input, out option) && option >= 0 && option <= 8) break;
+                if (int.TryParse(input, out option) && option >= 0 && option <= 9) break;
                 Console.WriteLine("Malformed input, try again!");
             }
 
@@ -24,8 +24,9 @@ public class CLI
             else if (option == 3) ChangeTagScanningHandler();
             else if (option == 4) WriteTagHandler();
             else if (option == 5) ShowCurrentTagValuesHandler();
-            else if (option == 6) RegisterHandler();
-            else if (option == 7) LoginHandler();
+            else if (option == 6) AddAlarmHandler();
+            else if (option == 7) RegisterHandler();
+            else if (option == 8) LoginHandler();
             else LogoutHandler();
         }
     }
@@ -40,15 +41,16 @@ public class CLI
             Console.WriteLine("(3) Change Tag Scanning");
             Console.WriteLine("(4) Write Tag Output Value");
             Console.WriteLine("(5) Show Current Tag Values");
+            Console.WriteLine("(6) Add Alarm");
         }
         else
         {
-            Console.WriteLine("(6) Register");
-            Console.WriteLine("(7) Login");
+            Console.WriteLine("(7) Register");
+            Console.WriteLine("(8) Login");
         }
 
                 
-        if (this.token != "") Console.WriteLine("(8) Logout");
+        if (this.token != "") Console.WriteLine("(9) Logout");
 
         Console.WriteLine("---------------------------------------");
     }
@@ -374,5 +376,58 @@ public class CLI
         HttpManager.Logout(dto).Wait();
         this.token = "";
         this.username = "";
+    }
+
+    public void AddAlarmHandler()
+    {
+        AddAlarmDTO dto = new AddAlarmDTO();
+        dto.token = token;
+        dto.username = username;
+        Console.Write("Enter tag name: ");
+        dto.TagName = Console.ReadLine().Trim();
+
+        Console.Write("Enter alarm unit: ");
+        dto.Unit = Console.ReadLine().Trim();
+
+        decimal tresh;
+        while (true)
+        {
+            Console.Write("Enter threshold for alarm: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out tresh)) Console.WriteLine("Malfromed input, try agian!");
+            else break;
+        }
+        dto.Threshold = tresh;
+        
+        Console.WriteLine("(0) Low");
+        Console.WriteLine("(1) High");
+        int option;
+        while (true)
+        {
+            Console.Write("Enter alarm type: ");
+            string input;
+            input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out option) || option < 0 || option > 1) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        if (option == 0) dto.Type = AlarmType.Low;
+        else dto.Type = AlarmType.High;
+
+        Console.WriteLine("(0) Low");
+        Console.WriteLine("(1) Medium");
+        Console.WriteLine("(2) High");
+        while (true)
+        {
+            Console.Write("Enter alarm priority: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out option) || option < 0 || option > 2) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        if (option == 0) dto.Priority = AlarmPriority.Low;
+        else if (option == 1) dto.Priority = AlarmPriority.Medium;
+        else dto.Priority = AlarmPriority.High;
+
+        var task = HttpManager.AddAlarm(dto);
+        task.Wait();
     }
 }

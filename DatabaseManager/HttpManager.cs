@@ -148,4 +148,21 @@ public class HttpManager
             }
         }
     }
+    
+    public static async Task AddAlarm(AddAlarmDTO dto)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            string body = JsonConvert.SerializeObject(dto);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(ServerUrl + "addAlarm", content);
+            if (response.StatusCode == HttpStatusCode.OK)  Console.WriteLine("Successfully added alarm.");
+            else
+            {
+                Console.WriteLine("Error adding alarm - status code: " + response.StatusCode);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseBody);
+            }
+        }
+    }
 }

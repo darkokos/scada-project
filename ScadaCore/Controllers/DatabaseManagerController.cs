@@ -14,14 +14,16 @@ public class DatabaseManagerController : ControllerBase
     private ITagService tagService;
     private UserState userState;
     private ITagLogService TagLogService;
+    private IAlarmService alarmService;
 
-    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState, ITagService tagService, ITagLogService tagLogService)
+    public DatabaseManagerController(ILogger<DatabaseManagerController> logger, IUserService userService, UserState userState, ITagService tagService, ITagLogService tagLogService, IAlarmService alarmService)
     {
         _logger = logger;
         this.userState = userState;
         this.userService = userService;
         this.TagLogService = tagLogService;
         this.tagService = tagService;
+        this.alarmService = alarmService;
     }
 
     [HttpPost("deleteTag")]
@@ -128,6 +130,7 @@ public class DatabaseManagerController : ControllerBase
     [HttpPost("addTag")]
     public IActionResult addTag([FromBody] AddTagDTO dto)
     {
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         Tag tag = null;
         if (dto.analogInput != null)
         {
@@ -155,6 +158,33 @@ public class DatabaseManagerController : ControllerBase
         var task = tagService.CreateTagAsync(tag);
         task.Wait();
 
+        return Ok("");
+    }
+    
+    [HttpPost("addAlarm")]
+    public IActionResult addAlarm([FromBody] AddAlarmDTO dto)
+    {
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        var getTagTask = this.tagService.GetTagAsync(dto.TagName);
+        getTagTask.Wait();
+        var tag = getTagTask.Result;
+        if (tag == null) return BadRequest("");
+        if (tag.GetType() != typeof(AnalogInputTag)) return BadRequest("");
+
+        var newAlarm = new Alarm((ScadaCore.Models.AlarmType)((int)dto.Type), (ScadaCore.Models.AlarmPriority)((int)dto.Priority), dto.Threshold, dto.Unit);
+        var idTask = alarmService.GetNextId();
+        idTask.Wait();
+        newAlarm.Id = idTask.Result;
+        var createAlarmTask = alarmService.CreateAlarmAsync(newAlarm);
+        createAlarmTask.Wait();
+        var alarm = createAlarmTask.Result;
+
+        var analogTag = (AnalogInputTag) tag;
+        analogTag.AlarmIds.Add(alarm.Id);
+
+        this.tagService.DeleteTagAsync(tag).Wait();
+        this.tagService.CreateTagAsync(analogTag).Wait();
+        
         return Ok("");
     }
 }
