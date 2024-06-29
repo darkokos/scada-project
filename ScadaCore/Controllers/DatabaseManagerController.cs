@@ -87,9 +87,15 @@ public class DatabaseManagerController : ControllerBase
         getTagTask.Wait();
         var tag = getTagTask.Result;
         if (tag == null) return BadRequest("");
+        if (tag.GetType() != typeof(AnalogInputTag) && tag.GetType() != typeof(DigitalInputTag)) return BadRequest("");
+        
         var inputTag = (InputTag)tag;
         inputTag.IsScanned = dto.state;
-        // TODO: write update
+
+        var deleteTask = tagService.DeleteTagAsync(tag);
+        deleteTask.Wait();
+        var createTask = tagService.CreateTagAsync(tag);
+        
         return Ok("");
     }
     
