@@ -11,5 +11,5 @@ public interface ITagService {
 
     Task<bool> DeleteTagAsync(Tag tag);
 
-    Task<Collection<String>> GetAllInputTags();
+    Task<Collection<Tag>> GetAllOutputTags();
 }

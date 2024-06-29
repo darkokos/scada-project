@@ -105,23 +105,16 @@ public class DatabaseManagerController : ControllerBase
     public IActionResult currentTagValues([FromBody] ShowCurrentTagValuesDTO dto)
     {
         if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
-        var getTags = tagService.GetAllInputTags();
+        var getTags = tagService.GetAllOutputTags();
         getTags.Wait();
         var tags = getTags.Result;
-        _logger.LogInformation(tags.Count.ToString());
         String res = "";
-        foreach (String tag in tags)
+        foreach (Tag tag in tags)
         {
-            _logger.LogInformation(tag);
-            res += tag;
+            res += tag.Name;
             res += " - ";
-            
-            var task = TagLogService.GetLatestLog(tag);
-            task.Wait();
-            var log = task.Result;
-            if (log == null) res += "/";
-            else res += log.EmittedValue;
-            
+            if (tag.GetType() == typeof(DigitalOutputTag)) res += ((DigitalOutputTag)tag).InitialValue;
+            else res += ((AnalogOutputTag)tag).InitialValue;
             res += "\n";
         }
         return Ok(res);

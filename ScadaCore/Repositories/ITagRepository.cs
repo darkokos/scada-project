@@ -9,5 +9,5 @@ public interface ITagRepository {
     Task<Tag?> CreateTagAsync(Tag tag);
 
     Task<bool> DeleteTagAsync(Tag tag);
-    Task<Collection<String>> GetAllInputTags();
+    Task<Collection<Tag>> GetAllOutputTags();
 }

@@ -123,18 +123,29 @@ public class TagRepository : ITagRepository {
         await SaveXElementAsync(rootElement);
         return true;
     }
-    public async Task<Collection<String>> GetAllInputTags()
+    public async Task<Collection<Tag>> GetAllOutputTags()
     {
         var rootElement = await GetRootElement();
         var tagTypes =
             new [] {
-                AnalogInputTag.GetXName,
-                DigitalInputTag.GetXName
+                AnalogOutputTag.GetXName,
+                DigitalOutputTag.GetXName
             };
         var tagsXElements =
             rootElement.Descendants().Where(descendant => tagTypes.Contains(descendant.Name.LocalName));
-        Collection<String> res = new Collection<String>();
-        foreach (var tagXElement in tagsXElements) res.Add(tagXElement.Element(Tag.GetNameXElementName())?.Value);
+        
+        Collection<Tag> res = new Collection<Tag>();
+        foreach (var tagXElement in tagsXElements)
+        {
+            switch (tagXElement.Name.LocalName) {
+                case AnalogOutputTag.GetXName:
+                    res.Add(new AnalogOutputTag(tagXElement));
+                    break;
+                case DigitalOutputTag.GetXName:
+                     res.Add(new DigitalOutputTag(tagXElement));
+                    break;
+            }
+        }
         return res;
     }
 }

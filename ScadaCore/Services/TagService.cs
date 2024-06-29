@@ -35,9 +35,9 @@ public class TagService : ITagService
         return task.Result;
     }
 
-    public async Task<Collection<String>> GetAllInputTags()
+    public async Task<Collection<Tag>> GetAllOutputTags()
     {
-        var task = this.TagRepository.GetAllInputTags();
+        var task = this.TagRepository.GetAllOutputTags();
         task.Wait();
         return task.Result;
     }
