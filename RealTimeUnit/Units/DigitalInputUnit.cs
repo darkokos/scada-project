@@ -21,7 +21,7 @@ public class DigitalInputUnit(string tagName, TimeSpan scanTime) : IRtu {
             while (!Console.KeyAvailable) {
                 Thread.Sleep(scanTime);
 
-                await RtuService.SendDigitalValue(new DigitalValueDto(tagName, GenerateValue()));
+                await RtuService.SendDigitalValue(new DigitalValueDto(tagName, GenerateValue(), DateTime.Now));
             }
         } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
     }

@@ -26,7 +26,7 @@ public class AnalogInputUnit(string tagName, TimeSpan scanTime, decimal lowLimit
             while (!Console.KeyAvailable) {
                 Thread.Sleep(scanTime);
 
-                await RtuService.SendAnalogValue(new AnalogValueDto(tagName, GenerateValue()));
+                await RtuService.SendAnalogValue(new AnalogValueDto(tagName, GenerateValue(), DateTime.Now));
             }
         } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
     }

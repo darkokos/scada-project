@@ -6,4 +6,5 @@ namespace Common.RealTimeUnit;
 public partial class DigitalValueDto {
     public string TagName { get; set; }
     public bool Value { get; set; }
+    public DateTime Timestamp { get; set; }
 }

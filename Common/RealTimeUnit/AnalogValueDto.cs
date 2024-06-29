@@ -6,4 +6,5 @@ namespace Common.RealTimeUnit;
 public partial class AnalogValueDto {
     public string TagName { get; set; }
     public decimal Value { get; set; }
+    public DateTime Timestamp { get; set; }
 }
