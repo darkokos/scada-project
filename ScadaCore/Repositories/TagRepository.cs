@@ -1,14 +1,16 @@
-﻿using System.Xml;
+﻿using System.Collections.ObjectModel;
+using System.Xml;
 using System.Xml.Linq;
+using Microsoft.VisualBasic;
 using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
 
 public class TagRepository : ITagRepository {
-    private const string XmlFilePath = "~/Config/scadaConfig.xml";
+    private const string XmlFilePath = "Config/scadaConfig.xml";
 
     public TagRepository() {
-        Directory.CreateDirectory("~/Config");
+        Directory.CreateDirectory("Config");
         if (File.Exists(XmlFilePath))
             return;
         
@@ -25,7 +27,7 @@ public class TagRepository : ITagRepository {
     }
     
     private static async Task<XElement> GetRootElement() {
-        using var xmlReader = XmlReader.Create(XmlFilePath);
+        using var xmlReader = XmlReader.Create(XmlFilePath, new XmlReaderSettings{ Async = true});
         return await XElement.LoadAsync(xmlReader, LoadOptions.None, CancellationToken.None);
     }
     
@@ -61,7 +63,7 @@ public class TagRepository : ITagRepository {
     }
 
     private static async Task SaveXElementAsync(XElement xElement) {
-        await using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        await using var xmlWriter = XmlWriter.Create(XmlFilePath, new XmlWriterSettings{Async = true});
         await xElement.SaveAsync(xmlWriter, CancellationToken.None);
     }
     
@@ -120,5 +122,30 @@ public class TagRepository : ITagRepository {
 
         await SaveXElementAsync(rootElement);
         return true;
+    }
+    public async Task<Collection<Tag>> GetAllOutputTags()
+    {
+        var rootElement = await GetRootElement();
+        var tagTypes =
+            new [] {
+                AnalogOutputTag.GetXName,
+                DigitalOutputTag.GetXName
+            };
+        var tagsXElements =
+            rootElement.Descendants().Where(descendant => tagTypes.Contains(descendant.Name.LocalName));
+        
+        Collection<Tag> res = new Collection<Tag>();
+        foreach (var tagXElement in tagsXElements)
+        {
+            switch (tagXElement.Name.LocalName) {
+                case AnalogOutputTag.GetXName:
+                    res.Add(new AnalogOutputTag(tagXElement));
+                    break;
+                case DigitalOutputTag.GetXName:
+                     res.Add(new DigitalOutputTag(tagXElement));
+                    break;
+            }
+        }
+        return res;
     }
 }

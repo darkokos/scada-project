@@ -1,14 +1,15 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using ScadaCore.Models;
+using ScadaCore.Services;
 
 namespace ScadaCore.Repositories;
 
 public class AlarmRepository : IAlarmRepository {
-    private const string XmlFilePath = "~/Config/alarmConfig.xml";
+    private const string XmlFilePath = "Config/alarmConfig.xml";
     
     public AlarmRepository() {
-        Directory.CreateDirectory("~/Config");
+        Directory.CreateDirectory("Config");
         if (File.Exists(XmlFilePath))
             return;
         
@@ -18,7 +19,7 @@ public class AlarmRepository : IAlarmRepository {
     }
     
     private static async Task<XElement> GetRootElement() {
-        using var xmlReader = XmlReader.Create(XmlFilePath);
+        using var xmlReader = XmlReader.Create(XmlFilePath, new XmlReaderSettings{ Async = true});
         return await XElement.LoadAsync(xmlReader, LoadOptions.None, CancellationToken.None);
     }
 
@@ -36,7 +37,7 @@ public class AlarmRepository : IAlarmRepository {
     }
 
     private static async Task SaveXElementAsync(XElement xElement) {
-        await using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        await using var xmlWriter = XmlWriter.Create(XmlFilePath, new XmlWriterSettings{Async = true});
         await xElement.SaveAsync(xmlWriter, CancellationToken.None);
     }
 
@@ -69,5 +70,13 @@ public class AlarmRepository : IAlarmRepository {
 
         await SaveXElementAsync(rootElement);
         return true;
+    }
+
+    public async Task<int> GetNextId()
+    {
+        var rootElement = await GetRootElement();
+        var alarms = rootElement.Elements(Alarm.GetXName());
+        if (!alarms.Any()) return 0;
+        return rootElement.Elements(Alarm.GetXName()).Max(alarm => int.TryParse(alarm.Value, out var id) ? id : 0) + 1;
     }
 }

@@ -25,6 +25,16 @@ public partial class AnalogOutputTag : OutputTag {
     private static string GetUnitXElementName() {
         return "unit";
     }
+
+    public AnalogOutputTag(string name, string description, int inputOutputAddress, decimal initialValue,
+        decimal lowLimit, decimal highLimit, string unit) : base(name, description,
+        inputOutputAddress)
+    {
+        InitialValue = initialValue;
+        LowLimit = lowLimit;
+        HighLimit = highLimit;
+        Unit = unit;
+    }
     
     public AnalogOutputTag(XContainer analogOutputTagXElement) : base(analogOutputTagXElement) {
         InitialValue = decimal.TryParse(

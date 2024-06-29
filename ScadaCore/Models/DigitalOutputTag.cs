@@ -11,6 +11,13 @@ public partial class DigitalOutputTag : OutputTag {
         return "initialValue";
     }
 
+    public DigitalOutputTag(string name, string description, int inputOutputAddress, bool initialValue) : base(name,
+        description,
+        inputOutputAddress)
+    {
+        InitialValue = initialValue;
+    }
+
     public DigitalOutputTag(XContainer digitalOutputTagXElement) : base(digitalOutputTagXElement) {
         InitialValue = bool.TryParse(
             digitalOutputTagXElement.Element(GetInitialValueXElementName())?.Value,

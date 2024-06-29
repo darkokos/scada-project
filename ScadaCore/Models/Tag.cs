@@ -31,6 +31,13 @@ public partial class Tag {
             ) ? inputOutputAddress : -1;
     }
 
+    protected Tag(string name, string description, int inputOutputAddress)
+    {
+        Name = name;
+        Description = description;
+        InputOutputAddress = inputOutputAddress;
+    }
+
     public static string GetRootXElementName() {
         return "tags";
     }
