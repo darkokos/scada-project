@@ -5,10 +5,10 @@ using ScadaCore.Models;
 namespace ScadaCore.Repositories;
 
 public class AlarmLogXmlRepository : IAlarmLogRepository {
-    private const string XmlFilePath = "~/Logs/alarmLog.xml";
+    private const string XmlFilePath = "/Logs/alarmLog.xml";
 
     public AlarmLogXmlRepository() {
-        Directory.CreateDirectory("~/Logs");
+        Directory.CreateDirectory("/Logs");
         if (File.Exists(XmlFilePath))
             return;
         
@@ -49,7 +49,7 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
         rootElement
             .Add(alarmLogXElement);
 
-        await using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        await using var xmlWriter = XmlWriter.Create(XmlFilePath, new XmlWriterSettings{Async = true});
         await rootElement.SaveAsync(xmlWriter, CancellationToken.None);
         return new AlarmLog(alarmLogXElement);
     }

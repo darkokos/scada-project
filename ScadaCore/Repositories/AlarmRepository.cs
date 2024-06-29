@@ -36,7 +36,7 @@ public class AlarmRepository : IAlarmRepository {
     }
 
     private static async Task SaveXElementAsync(XElement xElement) {
-        await using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        await using var xmlWriter = XmlWriter.Create(XmlFilePath, new XmlWriterSettings{Async = true});
         await xElement.SaveAsync(xmlWriter, CancellationToken.None);
     }
 

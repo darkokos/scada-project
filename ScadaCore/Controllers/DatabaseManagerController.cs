@@ -27,7 +27,7 @@ public class DatabaseManagerController : ControllerBase
     [HttpPost("deleteTag")]
     public IActionResult DeleteTag([FromBody] DeleteTagDTO dto)
     {
-        if (userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         var getTagTask = this.tagService.GetTagAsync(dto.TagName);
         getTagTask.Wait();
         var tag = getTagTask.Result;
@@ -117,5 +117,38 @@ public class DatabaseManagerController : ControllerBase
             res += "\n";
         }
         return Ok(res);
+    }
+
+    [HttpPost("addTag")]
+    public IActionResult addTag([FromBody] AddTagDTO dto)
+    {
+        Tag tag = null;
+        if (dto.analogInput != null)
+        {
+            AddAnalogInputTag addTag = dto.analogInput;
+            tag = new AnalogInputTag(addTag.Name, addTag.Description, addTag.InputOutputAddress, addTag.IsSimulated, addTag.ScanTime, addTag.IsScanned, addTag.LowLimit, addTag.HighLimit, addTag.Unit);
+        } 
+        else if (dto.analogOutput != null)
+        {
+            AddAnalogOutputTag addTag = dto.analogOutput;
+            tag = new AnalogOutputTag(addTag.Name, addTag.Description, addTag.InputOutputAddress, addTag.InitialValue,
+                addTag.LowLimit, addTag.HighLimit, addTag.Unit);
+        } 
+        else if (dto.digitalInput != null)
+        {
+            AddDigitalInputTag addTag = dto.digitalInput;
+            tag = new DigitalInputTag(addTag.Name, addTag.Description, addTag.InputOutputAddress, addTag.IsSimulated,
+                addTag.ScanTime, addTag.IsScanned);
+        }
+        else if (dto.digitalOutput != null)
+        {
+            AddDigitalOutputTag addTag = dto.digitalOutput;
+            tag = new DigitalOutputTag(addTag.Name, addTag.Description, addTag.InputOutputAddress, addTag.InitialValue);
+        }
+
+        var task = tagService.CreateTagAsync(tag);
+        task.Wait();
+
+        return Ok("");
     }
 }

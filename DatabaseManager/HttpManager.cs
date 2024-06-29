@@ -132,4 +132,20 @@ public class HttpManager
             }
         }
     }
+    public static async Task AddTag(AddTagDTO dto)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            string body = JsonConvert.SerializeObject(dto);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(ServerUrl + "addTag", content);
+            if (response.StatusCode == HttpStatusCode.OK)  Console.WriteLine("Successfully added tag.");
+            else
+            {
+                Console.WriteLine("Error adding tag - status code: " + response.StatusCode);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseBody);
+            }
+        }
+    }
 }

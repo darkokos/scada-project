@@ -21,8 +21,11 @@ public class TagService : ITagService
         return task.Result;
     }
 
-    public async Task<Tag?> CreateTagAsync(Tag tag) {
-        return null;
+    public async Task<Tag?> CreateTagAsync(Tag tag)
+    {
+        var task = TagRepository.CreateTagAsync(tag);
+        task.Wait();
+        return task.Result;
     }
 
     public async Task<bool> DeleteTagAsync(Tag tag)

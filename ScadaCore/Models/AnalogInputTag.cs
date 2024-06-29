@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using Common.DatabaseManagerCommon;
 using Lombok.NET;
 
 namespace ScadaCore.Models;
@@ -47,6 +48,15 @@ public partial class AnalogInputTag : InputTag {
             out var highLimit
         ) ? highLimit : -1;
         Unit = analogInputTagXElement.Element(GetUnitXElementName())?.Value ?? "";
+    }
+
+    public AnalogInputTag(string name, string description, int inputOutputAddress, bool isSimulated, TimeSpan scanTime, bool isScanned, decimal lowLimit, decimal highLimit, string unit) : base(name, description,
+        inputOutputAddress, isSimulated, scanTime, isScanned)
+    {
+        LowLimit = lowLimit;
+        HighLimit = highLimit;
+        Unit = unit;
+        AlarmIds = new HashSet<int>();
     }
 
     public static string GetParentXElementName() {

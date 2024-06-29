@@ -53,8 +53,222 @@ public class CLI
         Console.WriteLine("---------------------------------------");
     }
 
-    // TODO
-    public void AddTagHandler() { }
+    public void AddTagHandler()
+    {
+        var dto = new AddTagDTO();
+        dto.username = username;
+        dto.token = token;
+        int option;
+        while (true)
+        {
+            Console.WriteLine("(0) Add Analog Input Tag");
+            Console.WriteLine("(1) Add Analog Output Tag");
+            Console.WriteLine("(2) Add Digital Input Tag");
+            Console.WriteLine("(3) Add Digital Output Tag");
+            Console.Write("> ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out option) || option < 0 || option > 3)
+                Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+
+        if (option == 0) dto.analogInput = readAnalogInput();
+        else if (option == 1) dto.analogOutput = readAnalogOutput();
+        else if (option == 2) dto.digitalInput = readDigitalInput();
+        else dto.digitalOutput = readDigitalOutput();
+        var task = HttpManager.AddTag(dto);
+        task.Wait();
+    }
+
+    AddAnalogOutputTag readAnalogOutput()
+    {
+        var res = new AddAnalogOutputTag();
+        Console.WriteLine("Enter tag name: ");
+        res.Name = Console.ReadLine().Trim();
+        Console.WriteLine("Enter tag description: ");
+        res.Description = Console.ReadLine().Trim();
+        int address;
+        while (true) {
+            Console.Write("Enter input output address: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out address)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InputOutputAddress = address;
+
+        decimal invitialValue;
+        while (true) {
+            Console.Write("Enter initial value: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out invitialValue)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InitialValue = invitialValue;
+        
+        decimal lowLimit;
+        while (true) {
+            Console.Write("Enter low limit: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out lowLimit)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.LowLimit = lowLimit;
+
+        decimal highLimit;
+        while (true) {
+            Console.Write("Enter high limit: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out highLimit)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.HighLimit = highLimit;
+        
+        Console.Write("Enter unit: ");
+        res.Unit = Console.ReadLine().Trim();
+
+        return res;
+    }
+
+    AddAnalogInputTag readAnalogInput()
+    {
+        var res = new AddAnalogInputTag();
+        Console.WriteLine("Enter tag name: ");
+        res.Name = Console.ReadLine().Trim();
+        Console.WriteLine("Enter tag description: ");
+        res.Description = Console.ReadLine().Trim();
+        int address;
+        while (true) {
+            Console.Write("Enter input output address: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out address)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InputOutputAddress = address;
+
+        bool isSimulated;
+        while (true) {
+            Console.Write("Is tag simulated: ");
+            string input = Console.ReadLine().Trim();
+            if (!bool.TryParse(input, out isSimulated)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.IsSimulated = isSimulated;
+        
+        bool isScanned;
+        while (true) {
+            Console.Write("Is tag scanned: ");
+            string input = Console.ReadLine().Trim();
+            if (!bool.TryParse(input, out isScanned)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.IsScanned = isScanned;
+
+        int seconds;
+        while (true) {
+            Console.Write("Enter scant time in seconds: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out seconds)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.ScanTime = new TimeSpan(0, 0, seconds);
+        res.AlarmIds = new HashSet<int>();
+        
+        decimal lowLimit;
+        while (true) {
+            Console.Write("Enter low limit: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out lowLimit)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.LowLimit = lowLimit;
+
+        decimal highLimit;
+        while (true) {
+            Console.Write("Enter high limit: ");
+            string input = Console.ReadLine().Trim();
+            if (!decimal.TryParse(input, out highLimit)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.HighLimit = highLimit;
+        
+        Console.Write("Enter unit: ");
+        res.Unit = Console.ReadLine().Trim();
+        
+        return res;
+    }
+
+    AddDigitalInputTag readDigitalInput()
+    {
+        var res = new AddDigitalInputTag();
+        Console.WriteLine("Enter tag name: ");
+        res.Name = Console.ReadLine().Trim();
+        Console.WriteLine("Enter tag description: ");
+        res.Description = Console.ReadLine().Trim();
+        int address;
+        while (true) {
+            Console.Write("Enter input output address: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out address)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InputOutputAddress = address;
+
+        bool isSimulated;
+        while (true) {
+            Console.Write("Is tag simulated: ");
+            string input = Console.ReadLine().Trim();
+            if (!bool.TryParse(input, out isSimulated)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.IsSimulated = isSimulated;
+        
+        bool isScanned;
+        while (true) {
+            Console.Write("Is tag scanned: ");
+            string input = Console.ReadLine().Trim();
+            if (!bool.TryParse(input, out isScanned)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.IsScanned = isScanned;
+
+        int seconds;
+        while (true) {
+            Console.Write("Enter scant time in seconds: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out seconds)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.ScanTime = new TimeSpan(0, 0, seconds);
+        return res;
+    }
+
+    AddDigitalOutputTag readDigitalOutput()
+    {
+        var res = new AddDigitalOutputTag();
+        Console.WriteLine("Enter tag name: ");
+        res.Name = Console.ReadLine().Trim();
+        Console.WriteLine("Enter tag description: ");
+        res.Description = Console.ReadLine().Trim();
+        int address;
+        while (true) {
+            Console.Write("Enter input output address: ");
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out address)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InputOutputAddress = address;
+
+        bool intialValue;
+        while (true) {
+            Console.Write("Enter tag initial value: ");
+            string input = Console.ReadLine().Trim();
+            if (!bool.TryParse(input, out intialValue)) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+        res.InitialValue = intialValue;
+        
+        return res;
+    }
 
     public void RemoveTagHandler()
     {

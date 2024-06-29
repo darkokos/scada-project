@@ -12,6 +12,10 @@ public partial class DigitalInputTag : InputTag {
     }
 
     public const string GetXName = "digitalInputTag";
+    public DigitalInputTag(string name, string description, int inputOutputAddress, bool isSimulated, TimeSpan scanTime, bool isScanned) : base(name, description,
+        inputOutputAddress, isSimulated, scanTime, isScanned)
+    {
+    }
     
     public XElement GetXElementRepresentation() {
         var xElementRepresentation = new XElement(GetXName);

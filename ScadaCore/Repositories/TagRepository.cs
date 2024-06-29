@@ -7,10 +7,10 @@ using ScadaCore.Models;
 namespace ScadaCore.Repositories;
 
 public class TagRepository : ITagRepository {
-    private const string XmlFilePath = "~/Config/scadaConfig.xml";
+    private const string XmlFilePath = "Config/scadaConfig.xml";
 
     public TagRepository() {
-        Directory.CreateDirectory("~/Config");
+        Directory.CreateDirectory("Config");
         if (File.Exists(XmlFilePath))
             return;
         
@@ -63,7 +63,7 @@ public class TagRepository : ITagRepository {
     }
 
     private static async Task SaveXElementAsync(XElement xElement) {
-        await using var xmlWriter = XmlWriter.Create(XmlFilePath);
+        await using var xmlWriter = XmlWriter.Create(XmlFilePath, new XmlWriterSettings{Async = true});
         await xElement.SaveAsync(xmlWriter, CancellationToken.None);
     }
     
