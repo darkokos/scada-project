@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace DatabaseManager;
 using Common.DatabaseManagerCommon;
 
@@ -310,20 +312,44 @@ public class CLI
     {
         WriteTagValueDTO dto = new WriteTagValueDTO();
         dto.token = token;
+        dto.username = username;
         Console.Write("Enter name of the tag: ");
         dto.TagName = Console.ReadLine().Trim();
 
+        int option;
+        Console.WriteLine("(0) Decimal value");
+        Console.WriteLine("(1) Bool value");
         while (true)
         {
-            Console.WriteLine("Enter the new value to be written: ");
-            int value;
-            string input = Console.ReadLine();
-            if (!int.TryParse(input, out value)) Console.WriteLine("Malformed input, try again!");
-            else
+            string input = Console.ReadLine().Trim();
+            if (!int.TryParse(input, out option) || option < 0 || option > 1) Console.WriteLine("Malformed input, try again!");
+            else break;
+        }
+
+        if (option == 0)
+        {
+            decimal value;
+            while (true)
             {
-                dto.value = value;
-                break;
+                Console.Write("Enter decimal value: ");
+                string input = Console.ReadLine().Trim();
+                if (!decimal.TryParse(input, out value)) Console.WriteLine("Malformed input ,try again!");
+                else break;
             }
+
+            dto.decimalValue = value;
+        }
+        else {
+            bool value;
+            while (true)
+            {
+                Console.Write("Enter bool value: ");
+                string input = Console.ReadLine().Trim();
+                if (!bool.TryParse(input, out value)) Console.WriteLine("Malformed input ,try again!");
+                else break;
+            }
+
+            dto.boolValue = value;
         }
 
         HttpManager.WriteTagOutputValue(dto).Wait();

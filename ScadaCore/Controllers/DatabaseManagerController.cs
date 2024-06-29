@@ -180,4 +180,30 @@ public class DatabaseManagerController : ControllerBase
         
         return Ok("");
     }
+    
+    [HttpPost("writeTagValue")]
+    public IActionResult writeTagValue([FromBody] WriteTagValueDTO dto)
+    {
+        if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
+        var getTagTask = this.tagService.GetTagAsync(dto.TagName);
+        getTagTask.Wait();
+        var tag = getTagTask.Result;
+        if (tag.GetType() == typeof(DigitalOutputTag) && dto.boolValue != null)
+        {
+            var outputTag = (DigitalOutputTag)tag;
+            outputTag.InitialValue = dto.boolValue ?? false;
+            tagService.DeleteTagAsync(tag).Wait();
+            tagService.CreateTagAsync(outputTag).Wait();
+
+        } else if (tag.GetType() == typeof(AnalogOutputTag) && dto.decimalValue != null)
+        {
+            var outputTag = (AnalogOutputTag)tag;
+            outputTag.InitialValue = dto.decimalValue ?? 0;
+            tagService.DeleteTagAsync(tag).Wait();
+            tagService.CreateTagAsync(outputTag).Wait();
+        }
+        else return BadRequest("");
+
+        return Ok("");
+    }
 }
