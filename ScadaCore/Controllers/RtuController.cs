@@ -13,7 +13,7 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RtuInformationDto>> GetTag(string tagName) {
         var rtuInformation = await tagService.GetTagForRtuAsync(tagName);
-        return rtuInformation == null ? Ok(rtuInformation) : NotFound();
+        return rtuInformation == null ? NotFound() : Ok(rtuInformation) ;
     }
     
     [HttpPost("analog/input/{tagName}")]

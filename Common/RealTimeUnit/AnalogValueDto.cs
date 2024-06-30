@@ -21,11 +21,7 @@ public class AnalogValueDto(string tagName, decimal value, DateTime timestamp) {
 
     public void Sign(AsymmetricAlgorithm key) {
         var hashValue = SHA256.HashData(SerializeMessage());
-
-        RSAPKCS1SignatureFormatter? formatter;
-        using (key) {
-            formatter = new RSAPKCS1SignatureFormatter(key);
-        }
+        var formatter = new RSAPKCS1SignatureFormatter(key);
         formatter.SetHashAlgorithm("SHA256");
         Signature = Encoding.UTF8.GetString(formatter.CreateSignature(hashValue));
     }

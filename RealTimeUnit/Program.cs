@@ -10,7 +10,7 @@ internal abstract class Program {
     private static async Task Main() {
         string? tagName;
         do {
-            Console.WriteLine("Enter this unit's tag identifier (non-null): ");
+            Console.Write("Enter this unit's tag identifier (non-null): ");
             tagName = Console.ReadLine();
         } while (tagName == null);
 
@@ -27,11 +27,17 @@ internal abstract class Program {
             return;
         }
 
-        (rtuInformation switch {
+        var unit = rtuInformation switch {
             { isAnalog: true, isInput: true } => await AnalogInputUnit.Create(rtuInformation.TagName),
             { isAnalog: true, isInput: false } => await AnalogOutputUnit.Create(rtuInformation.TagName),
             { isAnalog: false, isInput: true } => await DigitalInputUnit.Create(rtuInformation.TagName),
             { isAnalog: false, isInput: false } => await DigitalOutputUnit.Create(rtuInformation.TagName)
-        })?.Start();
+        };
+        if (unit == null) {
+            Console.WriteLine("Something went wrong while fetching the RTU information.");
+            return;
+        }
+
+        await unit.Start();
     }
 }

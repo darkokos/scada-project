@@ -43,15 +43,15 @@ public class AnalogInputUnit(
         return RandomNumberGenerator.GetInt32((int) lowLimit, (int) highLimit + 1);
     }
     
-    public async void Start() {
+    public async Task Start() {
         Console.WriteLine("Press ESC to stop measuring and sending values to the server.");
         do {
             while (!Console.KeyAvailable) {
-                Thread.Sleep(scanTime);
-
                 var dto = new AnalogValueDto(tagName, GenerateValue(), DateTime.Now);
                 dto.Sign(key);
-                await RtuService.SendAnalogValue(dto);
+                var response = await RtuService.SendAnalogValue(dto);
+                
+                Thread.Sleep(scanTime);
             }
         } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
     }

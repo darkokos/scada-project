@@ -31,15 +31,15 @@ public class DigitalInputUnit(string tagName, TimeSpan scanTime, AsymmetricAlgor
         return RandomNumberGenerator.GetInt32(2) == 0;
     }
     
-    public async void Start() {
+    public async Task Start() {
         Console.WriteLine("Press ESC to stop measuring and sending values to the server.");
         do {
             while (!Console.KeyAvailable) {
-                Thread.Sleep(scanTime);
-
                 var digitalValueDto = new DigitalValueDto(tagName, GenerateValue(), DateTime.Now);
                 digitalValueDto.Sign(key);
-                await RtuService.SendDigitalValue(digitalValueDto);
+                var response = await RtuService.SendDigitalValue(digitalValueDto);
+                
+                Thread.Sleep(scanTime);
             }
         } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
     }

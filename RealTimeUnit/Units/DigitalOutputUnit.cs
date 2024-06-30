@@ -22,7 +22,8 @@ public class DigitalOutputUnit(bool currentValue) : IRtu {
         return new DigitalOutputUnit(digitalOutputUnitDto.CurrentValue);
     }
     
-    public void Start() {
-        Console.WriteLine($"Started digital output unit. The initial value is: {(currentValue ? 1 : 0)}");
+    public async Task Start() {
+        await Task.Run(() =>
+            Console.WriteLine($"Started digital output unit. The initial value is: {(currentValue ? 1 : 0)}"));
     }
 }

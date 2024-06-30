@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace RealTimeUnit.Services;
 
 public static class RtuService {
-    private const string RtuControllerUrl = "http://localhost:5038/Rtu/";
+    private const string RtuControllerUrl = "http://localhost:59767/Rtu";
 
     public static async Task<HttpResponseMessage> GetTag(string tagName) {
         using var httpClient = new HttpClient();

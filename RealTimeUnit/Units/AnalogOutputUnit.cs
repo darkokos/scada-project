@@ -22,7 +22,8 @@ public class AnalogOutputUnit(decimal currentValue) : IRtu {
         return new AnalogOutputUnit(analogOutputUnitDto.CurrentValue);
     }
     
-    public void Start() {
-        Console.WriteLine($"Started analog output unit. The initial value is: {currentValue}");
+    public async Task Start() {
+        await Task.Run(() =>
+            Console.WriteLine($"Started analog output unit. The initial value is: {currentValue}"));
     }
 }
