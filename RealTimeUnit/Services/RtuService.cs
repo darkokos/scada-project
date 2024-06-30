@@ -16,10 +16,16 @@ public static class RtuService {
         return JsonConvert.DeserializeObject<RtuInformationDto>(await response.Content.ReadAsStringAsync());
     }
 
-    public static async Task<AnalogInputUnitDto?> GetAnalogInputUnitInformation(string tagName) {
+    public static async Task<AnalogInputUnitDto?> GetAnalogInputUnitInformation(
+        string tagName,
+        RegisterInputUnitDto dto
+    ) {
+        var requestContent =
+            new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
         HttpResponseMessage response;
         using (var httpClient = new HttpClient()) {
-            response = await httpClient.GetAsync($"{RtuControllerUrl}/analog/input/{tagName}");
+            response =
+                await httpClient.PostAsync($"{RtuControllerUrl}/analog/input/{tagName}", requestContent);
         }
         
         return JsonConvert.DeserializeObject<AnalogInputUnitDto>(await response.Content.ReadAsStringAsync());
@@ -34,10 +40,16 @@ public static class RtuService {
         return JsonConvert.DeserializeObject<AnalogOutputUnitDto>(await response.Content.ReadAsStringAsync());
     }
     
-    public static async Task<DigitalInputUnitDto?> GetDigitalInputUnitInformation(string tagName) {
+    public static async Task<DigitalInputUnitDto?> GetDigitalInputUnitInformation(
+        string tagName,
+        RegisterInputUnitDto dto
+    ) {
+        var requestContent =
+            new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
         HttpResponseMessage response;
         using (var httpClient = new HttpClient()) {
-            response = await httpClient.GetAsync($"{RtuControllerUrl}/digital/input/{tagName}");
+            response =
+                await httpClient.PostAsync($"{RtuControllerUrl}/digital/input/{tagName}", requestContent);
         }
         
         return JsonConvert.DeserializeObject<DigitalInputUnitDto>(await response.Content.ReadAsStringAsync());

@@ -16,11 +16,17 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
         return rtuInformation == null ? Ok(rtuInformation) : NotFound();
     }
     
-    [HttpGet("analog/input/{tagName}")]
+    [HttpPost("analog/input/{tagName}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AnalogInputUnitDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AnalogInputUnitDto>> GetAnalogInputUnitInformation(string tagName) {
+    public async Task<ActionResult<AnalogInputUnitDto>> GetAnalogInputUnitInformation(
+        string tagName,
+        [FromBody] RegisterInputUnitDto dto
+    ) {
+        
+        // TODO: Add key to driver
+        
         var serviceResponse = await tagService.GetAnalogInputTagAsync(tagName);
         return serviceResponse.StatusCode switch {
             HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
@@ -44,11 +50,17 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
         };
     }
     
-    [HttpGet("digital/input/{tagName}")]
+    [HttpPost("digital/input/{tagName}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DigitalInputUnitDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<DigitalInputUnitDto>> GetDigitalInputUnitInformation(string tagName) {
+    public async Task<ActionResult<DigitalInputUnitDto>> GetDigitalInputUnitInformation(
+        string tagName,
+        [FromBody] RegisterInputUnitDto dto
+    ) {
+        
+        // TODO: Add key to driver
+        
         var serviceResponse = await tagService.GetDigitalInputTagAsync(tagName);
         return serviceResponse.StatusCode switch {
             HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
