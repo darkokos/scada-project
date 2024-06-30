@@ -8,7 +8,7 @@ using Common.DatabaseManagerCommon;
 public class HttpManager
 {
     
-    public static string ServerUrl = "http://localhost:5038/DatabaseManager/";
+    public static string ServerUrl = "http://localhost:59767/DatabaseManager/";
 
     public static async Task DeleteTag(DeleteTagDTO dto)
     {
