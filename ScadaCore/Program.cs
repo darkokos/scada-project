@@ -41,6 +41,8 @@ public class Program
         builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
         builder.Services.AddScoped<IAlarmService, AlarmService>();
         builder.Services.AddScoped<IAlarmRepository, AlarmRepository>();
+        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogDbRepository>();
+        builder.Services.AddScoped<IReportService, ReportService>();
         
         builder.Services.AddSingleton<UserState>();
 
