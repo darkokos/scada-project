@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 
-namespace ScadaCore.Service;
+namespace ScadaCore.Services;
 
 public class NotificationService
 {

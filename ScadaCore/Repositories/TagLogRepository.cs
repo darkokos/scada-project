@@ -1,4 +1,5 @@
-﻿using ScadaCore.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ScadaCore.Data;
 using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
