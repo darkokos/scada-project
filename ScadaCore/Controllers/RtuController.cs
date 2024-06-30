@@ -86,13 +86,17 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
     
     [HttpPost("analog")]
     public async Task<IActionResult> SendAnalogValue([FromBody] AnalogValueDto dto) {
-        await tagLogService.CreateAnalogTagLogAsync(dto);
-        return Ok();
+        
+        // TODO: Write value to driver
+
+        return StatusCode(StatusCodes.Status501NotImplemented);
     }
     
     [HttpPost("digital")]
     public async Task<IActionResult> SendDigitalValue([FromBody] DigitalValueDto dto) {
-        await tagLogService.CreateDigitalTagLogAsync(dto);
-        return Ok();
+        
+        // TODO: Write value to driver
+        
+        return StatusCode(StatusCodes.Status501NotImplemented);
     }
 }

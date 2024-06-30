@@ -7,82 +7,52 @@ namespace RealTimeUnit.Services;
 public static class RtuService {
     private const string RtuControllerUrl = "http://localhost:5038/Rtu/";
 
-    public static async Task<RtuInformationDto?> GetTag(string tagName) {
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response = await httpClient.GetAsync($"{RtuControllerUrl}/{tagName}");
-        }
-        
-        return JsonConvert.DeserializeObject<RtuInformationDto>(await response.Content.ReadAsStringAsync());
+    public static async Task<HttpResponseMessage> GetTag(string tagName) {
+        using var httpClient = new HttpClient();
+        return await httpClient.GetAsync($"{RtuControllerUrl}/{tagName}");
     }
 
-    public static async Task<AnalogInputUnitDto?> GetAnalogInputUnitInformation(
+    public static async Task<HttpResponseMessage> GetAnalogInputUnitInformation(
         string tagName,
         RegisterInputUnitDto dto
     ) {
         var requestContent =
             new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response =
-                await httpClient.PostAsync($"{RtuControllerUrl}/analog/input/{tagName}", requestContent);
-        }
-        
-        return JsonConvert.DeserializeObject<AnalogInputUnitDto>(await response.Content.ReadAsStringAsync());
+        using var httpClient = new HttpClient();
+        return await httpClient.PostAsync($"{RtuControllerUrl}/analog/input/{tagName}", requestContent);
     }
     
-    public static async Task<AnalogOutputUnitDto?> GetAnalogOutputUnitInformation(string tagName) {
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response = await httpClient.GetAsync($"{RtuControllerUrl}/analog/output/{tagName}");
-        }
-        
-        return JsonConvert.DeserializeObject<AnalogOutputUnitDto>(await response.Content.ReadAsStringAsync());
+    public static async Task<HttpResponseMessage> GetAnalogOutputUnitInformation(string tagName) {
+        using var httpClient = new HttpClient();
+        return await httpClient.GetAsync($"{RtuControllerUrl}/analog/output/{tagName}");
     }
     
-    public static async Task<DigitalInputUnitDto?> GetDigitalInputUnitInformation(
+    public static async Task<HttpResponseMessage> GetDigitalInputUnitInformation(
         string tagName,
         RegisterInputUnitDto dto
     ) {
         var requestContent =
             new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response =
-                await httpClient.PostAsync($"{RtuControllerUrl}/digital/input/{tagName}", requestContent);
-        }
-        
-        return JsonConvert.DeserializeObject<DigitalInputUnitDto>(await response.Content.ReadAsStringAsync());
+        using var httpClient = new HttpClient();
+        return await httpClient.PostAsync($"{RtuControllerUrl}/digital/input/{tagName}", requestContent);
     }
     
-    public static async Task<DigitalOutputUnitDto?> GetDigitalOutputUnitInformation(string tagName) {
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response = await httpClient.GetAsync($"{RtuControllerUrl}/digital/output/{tagName}");
-        }
-        
-        return JsonConvert.DeserializeObject<DigitalOutputUnitDto>(await response.Content.ReadAsStringAsync());
+    public static async Task<HttpResponseMessage> GetDigitalOutputUnitInformation(string tagName) {
+        using var httpClient = new HttpClient();
+        return await httpClient.GetAsync($"{RtuControllerUrl}/digital/output/{tagName}");
     }
 
-    public static async Task<AnalogTagLogDto?> SendAnalogValue(AnalogValueDto dto) {
+    public static async Task<HttpResponseMessage> SendAnalogValue(AnalogValueDto dto) {
         var requestContent =
             new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response = await httpClient.PostAsync($"{RtuControllerUrl}/analog", requestContent);
-        }
-
-        return JsonConvert.DeserializeObject<AnalogTagLogDto>(await response.Content.ReadAsStringAsync());
+        using var httpClient = new HttpClient();
+        return await httpClient.PostAsync($"{RtuControllerUrl}/analog", requestContent);
     }
     
-    public static async Task<DigitalTagLogDto?> SendDigitalValue(DigitalValueDto dto) {
+    public static async Task<HttpResponseMessage> SendDigitalValue(DigitalValueDto dto) {
         var requestContent =
             new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient()) {
-            response = await httpClient.PostAsync($"{RtuControllerUrl}/digital", requestContent);
-        }
-
-        return JsonConvert.DeserializeObject<DigitalTagLogDto>(await response.Content.ReadAsStringAsync());
+        using var httpClient = new HttpClient();
+        return await httpClient.PostAsync($"{RtuControllerUrl}/digital", requestContent);
     }
 }

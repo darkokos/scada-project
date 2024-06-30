@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using Common.RealTimeUnit;
+using Newtonsoft.Json;
 using RealTimeUnit.Services;
 
 namespace RealTimeUnit.Units;
@@ -11,15 +12,24 @@ public class AnalogInputUnit(
     decimal highLimit,
     AsymmetricAlgorithm key
 ) : IRtu {
-    public static async Task<IRtu> Create(string tagName) {
+    public static async Task<IRtu?> Create(string tagName) {
         var key = RSA.Create();
-        var analogInputUnitDto =
-            await RtuService
-                .GetAnalogInputUnitInformation(
-                    tagName,
-                    new RegisterInputUnitDto(key.ToXmlString(false))
-                );
+        var response = await RtuService.GetAnalogInputUnitInformation(
+            tagName,
+            new RegisterInputUnitDto(key.ToXmlString(false))
+        );
+        if (!response.IsSuccessStatusCode) {
+           Console.WriteLine(await response.Content.ReadAsStringAsync());
+           return null;
+        }
 
+        var analogInputUnitDto =
+            JsonConvert.DeserializeObject<AnalogInputUnitDto>(await response.Content.ReadAsStringAsync());
+        if (analogInputUnitDto == null) {
+            Console.WriteLine("Something went wrong while fetching the RTU information.");
+            return null;
+        }
+        
         return new AnalogInputUnit(
             analogInputUnitDto.TagName,
             analogInputUnitDto.ScanTime,

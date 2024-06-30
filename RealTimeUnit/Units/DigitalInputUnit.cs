@@ -1,18 +1,28 @@
 ﻿using System.Security.Cryptography;
 using Common.RealTimeUnit;
+using Newtonsoft.Json;
 using RealTimeUnit.Services;
 
 namespace RealTimeUnit.Units;
 
 public class DigitalInputUnit(string tagName, TimeSpan scanTime, AsymmetricAlgorithm key) : IRtu {
-    public static async Task<IRtu> Create(string tagName) {
+    public static async Task<IRtu?> Create(string tagName) {
         var key = RSA.Create();
+        var response = await RtuService.GetDigitalInputUnitInformation(
+            tagName,
+            new RegisterInputUnitDto(key.ToXmlString(false))
+        );
+        if (!response.IsSuccessStatusCode) {
+           Console.WriteLine(await response.Content.ReadAsStringAsync());
+           return null;
+        }
+
         var digitalInputUnitDto =
-            await RtuService
-                .GetDigitalInputUnitInformation(
-                    tagName,
-                    new RegisterInputUnitDto(key.ToXmlString(false))
-                );
+            JsonConvert.DeserializeObject<DigitalInputUnitDto>(await response.Content.ReadAsStringAsync());
+        if (digitalInputUnitDto == null) {
+            Console.WriteLine("Something went wrong while fetching the RTU information.");
+            return null;
+        }
 
         return new DigitalInputUnit(digitalInputUnitDto.TagName, digitalInputUnitDto.ScanTime, key);
     }

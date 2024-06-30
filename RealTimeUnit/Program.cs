@@ -1,4 +1,7 @@
-﻿using RealTimeUnit.Services;
+﻿using System.Net;
+using Common.RealTimeUnit;
+using Newtonsoft.Json;
+using RealTimeUnit.Services;
 using RealTimeUnit.Units;
 
 namespace RealTimeUnit;
@@ -11,7 +14,14 @@ internal abstract class Program {
             tagName = Console.ReadLine();
         } while (tagName == null);
 
-        var rtuInformation = await RtuService.GetTag(tagName);
+        var response = await RtuService.GetTag(tagName);
+        if (response.StatusCode == HttpStatusCode.NotFound) {
+            Console.WriteLine("Tag associated with input name was not found.");
+            return;
+        }
+
+        var rtuInformation =
+            JsonConvert.DeserializeObject<RtuInformationDto>(await response.Content.ReadAsStringAsync());
         if (rtuInformation == null) {
             Console.WriteLine("Something went wrong while fetching the RTU information.");
             return;
@@ -22,6 +32,6 @@ internal abstract class Program {
             { isAnalog: true, isInput: false } => await AnalogOutputUnit.Create(rtuInformation.TagName),
             { isAnalog: false, isInput: true } => await DigitalInputUnit.Create(rtuInformation.TagName),
             { isAnalog: false, isInput: false } => await DigitalOutputUnit.Create(rtuInformation.TagName)
-        }).Start();
+        })?.Start();
     }
 }
