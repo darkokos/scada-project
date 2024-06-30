@@ -4,12 +4,16 @@ using Common.RealTimeUnit;
 using ScadaCore.Models;
 using ScadaCore.Repositories;
 using ScadaCore.Utils;
+using System.Collections.ObjectModel;
 
 namespace ScadaCore.Services;
 
 public class TagService(ITagRepository tagRepository, IMapper mapper) : ITagService {
-    public async Task<Tag?> GetTagAsync(string name) {
-        return null;
+    public async Task<Tag?> GetTagAsync(string name)
+    {
+        var task = tagRepository.GetTagAsync(name);
+        task.Wait();
+        return task.Result;
     }
     
     public async Task<RtuInformationDto?> GetTagForRtuAsync(string name) {
@@ -56,11 +60,24 @@ public class TagService(ITagRepository tagRepository, IMapper mapper) : ITagServ
         return await GetTagAsync<DigitalOutputTag, DigitalOutputUnitDto>(name);
     }
 
-    public async Task<Tag?> CreateTagAsync(Tag tag) {
-        return null;
+    public async Task<Tag?> CreateTagAsync(Tag tag)
+    {
+        var task = tagRepository.CreateTagAsync(tag);
+        task.Wait();
+        return task.Result;
     }
 
-    public async Task<bool> DeleteTagAsync(Tag tag) {
-        return default;
+    public async Task<bool> DeleteTagAsync(Tag tag)
+    {
+        var task = tagRepository.DeleteTagAsync(tag);
+        task.Wait();
+        return task.Result;
+    }
+
+    public async Task<Collection<Tag>> GetAllOutputTags()
+    {
+        var task = tagRepository.GetAllOutputTags();
+        task.Wait();
+        return task.Result;
     }
 }

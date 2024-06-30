@@ -11,4 +11,6 @@ public interface ITagLogService {
     Task<TagLog?> CreateAnalogTagLogAsync(AnalogValueDto dto);
     
     Task<TagLog?> CreateDigitalTagLogAsync(DigitalValueDto dto);
+
+    Task<TagLog?> GetLatestLog(String tagName);
 }

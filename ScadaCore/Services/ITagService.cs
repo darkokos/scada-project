@@ -1,6 +1,7 @@
 ﻿using Common.RealTimeUnit;
 using ScadaCore.Models;
 using ScadaCore.Utils;
+using System.Collections.ObjectModel;
 
 namespace ScadaCore.Services;
 
@@ -20,4 +21,6 @@ public interface ITagService {
     Task<Tag?> CreateTagAsync(Tag tag);
 
     Task<bool> DeleteTagAsync(Tag tag);
+
+    Task<Collection<Tag>> GetAllOutputTags();
 }

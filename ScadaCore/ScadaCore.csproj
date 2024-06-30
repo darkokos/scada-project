@@ -27,4 +27,8 @@
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Config\" />
+  </ItemGroup>
+
 </Project>

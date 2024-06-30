@@ -8,4 +8,5 @@ public interface IAlarmRepository {
     Task<Alarm> CreateAlarmAsync(Alarm alarm);
 
     Task<bool> DeleteAlarmAsync(Alarm alarm);
+    Task<int> GetNextId();
 }

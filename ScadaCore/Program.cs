@@ -1,7 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using ScadaCore.Data;
+using ScadaCore.Repositories;
+using ScadaCore.Services;
 
 namespace ScadaCore;
+
+public class UserState
+{
+    public Dictionary<string, string> Data { get; } = new Dictionary<string, string>();
+}
 
 public class Program
 {
@@ -25,6 +32,17 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ITagService, TagService>();
+        builder.Services.AddScoped<ITagRepository, TagRepository>();
+        builder.Services.AddScoped<ITagLogService, TagLogService>();
+        builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
+        builder.Services.AddScoped<IAlarmService, AlarmService>();
+        builder.Services.AddScoped<IAlarmRepository, AlarmRepository>();
+        
+        builder.Services.AddSingleton<UserState>();
 
         var app = builder.Build();
 

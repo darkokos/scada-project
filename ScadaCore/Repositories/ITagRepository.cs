@@ -1,4 +1,5 @@
-﻿using ScadaCore.Models;
+﻿using System.Collections.ObjectModel;
+using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
 
@@ -8,4 +9,5 @@ public interface ITagRepository {
     Task<Tag?> CreateTagAsync(Tag tag);
 
     Task<bool> DeleteTagAsync(Tag tag);
+    Task<Collection<Tag>> GetAllOutputTags();
 }

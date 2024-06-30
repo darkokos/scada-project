@@ -1,11 +1,12 @@
 ﻿using ScadaCore.Data;
 using ScadaCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScadaCore.Repositories;
 
 public class UserRepository(UserContext userContext) : IUserRepository {
     public async Task<User?> GetUserAsync(string username) {
-        return await userContext.Users.FindAsync(username);
+        return await userContext.Users.FirstOrDefaultAsync(user => user.Username == username);
     }
 
     public async Task<User?> CreateUserAsync(User user) {

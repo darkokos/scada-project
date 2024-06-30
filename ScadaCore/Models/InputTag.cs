@@ -38,6 +38,14 @@ public partial class InputTag : Tag {
         ) && isScanned;
     }
 
+    protected InputTag(string name, string description, int inputOutputAddress, bool isSimulated, TimeSpan scanTime, bool isScanned) : base(name, description,
+        inputOutputAddress)
+    {
+        IsSimulated = isSimulated;
+        IsScanned = isScanned;
+        ScanTime = scanTime;
+    }
+
     protected new void SetXAttributes(XElement xElement) {
         xElement.AddFirst(new XElement(GetIsScannedXElementName(), IsScanned));
         xElement.AddFirst(new XElement(GetScanTimeXElementName(), ScanTime.TotalSeconds));

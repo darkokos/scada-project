@@ -17,8 +17,15 @@ public class TagLogService(ITagLogRepository tagLogRepository, IMapper mapper) :
     public async Task<TagLog?> CreateAnalogTagLogAsync(AnalogValueDto dto) {
         return await tagLogRepository.CreateTagLogAsync(mapper.Map<AnalogTagLog>(dto));
     }
-    
+
     public async Task<TagLog?> CreateDigitalTagLogAsync(DigitalValueDto dto) {
         return await tagLogRepository.CreateTagLogAsync(mapper.Map<DigitalTagLog>(dto));
+    }
+
+    public async Task<TagLog?> GetLatestLog(String tagName)
+    {
+        var task = tagLogRepository.GetLatestLog(tagName);
+        task.Wait();
+        return task.Result;
     }
 }

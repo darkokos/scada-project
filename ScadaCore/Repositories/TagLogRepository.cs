@@ -31,4 +31,12 @@ public class TagLogRepository(ValueAndAlarmContext valueAndAlarmContext) : ITagL
             _ => null
         } : null;
     }
+    
+    public async Task<TagLog?> GetLatestLog(String tagName)
+    {
+        var logs = valueAndAlarmContext.TagLogs.Where(log => log.TagName == tagName);
+            return logs
+            .OrderByDescending(item => item.Timestamp)
+            .FirstOrDefault();
+    }
 }
