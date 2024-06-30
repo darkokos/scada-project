@@ -6,4 +6,6 @@ public interface IAlarmLogRepository {
     Task<AlarmLog?> GetAlarmLogAsync(int id);
     
     Task<AlarmLog?> CreateAlarmLogAsync(AlarmLog alarmLog);
+
+    Task<IEnumerable<AlarmLog>> GetAllAlarmLogsAsync();
 }
