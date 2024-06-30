@@ -39,4 +39,21 @@ public class TagLogRepository(ValueAndAlarmContext valueAndAlarmContext) : ITagL
             .OrderByDescending(item => item.Timestamp)
             .FirstOrDefault();
     }
+    
+    public async Task<IEnumerable<TagLog?>> GetAllTagLogsAsync()
+    {
+        IEnumerable<TagLog> logs = await valueAndAlarmContext.TagLogs.ToListAsync();
+
+        IEnumerable<TagLog> tagLogs = new List<TagLog>();
+
+        for (var i = 0; i < logs.Count(); i++)
+        {
+            tagLogs.Append(logs.ElementAt(i) switch {
+                AnalogTagLog analogTagLog => analogTagLog,
+                DigitalTagLog digitalTagLog => digitalTagLog,
+                _ => null
+            });
+        }
+        return tagLogs;
+    }
 }

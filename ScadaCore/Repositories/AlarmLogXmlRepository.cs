@@ -53,4 +53,9 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
         await rootElement.SaveAsync(xmlWriter, CancellationToken.None);
         return new AlarmLog(alarmLogXElement);
     }
+
+    public async Task<IEnumerable<AlarmLog>> GetAllAlarmLogsAsync()
+    {
+        return null;
+    }
 }

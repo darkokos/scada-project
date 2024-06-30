@@ -8,4 +8,6 @@ public interface ITagLogRepository {
     Task<TagLog?> CreateTagLogAsync(TagLog tagLog);
 
     Task<TagLog?> GetLatestLog(String tagName);
+    
+    Task<IEnumerable<TagLog?>> GetAllTagLogsAsync();
 }
