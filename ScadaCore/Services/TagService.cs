@@ -5,10 +5,16 @@ using ScadaCore.Models;
 using ScadaCore.Repositories;
 using ScadaCore.Utils;
 using System.Collections.ObjectModel;
+using ScadaCore.Drivers;
 
 namespace ScadaCore.Services;
 
-public class TagService(ITagRepository tagRepository, IMapper mapper) : ITagService {
+public class TagService(
+    ITagRepository tagRepository,
+    IMapper mapper,
+    IAnalogRealTimeDriver analogRealTimeDriver,
+    IDigitalRealTimeDriver digitalRealTimeDriver
+) : ITagService {
     public async Task<Tag?> GetTagAsync(string name)
     {
         var task = tagRepository.GetTagAsync(name);
@@ -28,36 +34,80 @@ public class TagService(ITagRepository tagRepository, IMapper mapper) : ITagServ
         };
     }
 
-    private async Task<ServiceResponse<TDestination>> GetTagAsync<TSource, TDestination>(string name)
-        where TSource : Tag
-        where TDestination : class {
+    public async Task<ServiceResponse<AnalogInputUnitDto>> GetAnalogInputTagAsync(
+        string name,
+        RegisterInputUnitDto dto
+    ) {
         var tag = await tagRepository.GetTagAsync(name);
         if (tag == null)
-            return new ServiceResponse<TDestination>(HttpStatusCode.NotFound, "Tag not found.");
-
-        if (tag.GetType() != typeof(TSource))
-            return new ServiceResponse<TDestination>(
+            return new ServiceResponse<AnalogInputUnitDto>(HttpStatusCode.NotFound, "Tag not found.");
+        
+        if (tag.GetType() != typeof(AnalogInputTag))
+            return new ServiceResponse<AnalogInputUnitDto>(
                 HttpStatusCode.BadRequest,
                 "Wrong tag type."
             );
-
-        return new ServiceResponse<TDestination>(mapper.Map<TDestination>((TSource) tag), HttpStatusCode.OK);
-    }
-    
-    public async Task<ServiceResponse<AnalogInputUnitDto>> GetAnalogInputTagAsync(string name) {
-        return await GetTagAsync<AnalogInputTag, AnalogInputUnitDto>(name);
+        
+        analogRealTimeDriver.RegisterWriter(tag.InputOutputAddress, dto.PublicKey);
+        return new ServiceResponse<AnalogInputUnitDto>(
+            mapper.Map<AnalogInputUnitDto>((AnalogInputTag) tag),
+            HttpStatusCode.OK
+        );
     }
 
     public async Task<ServiceResponse<AnalogOutputUnitDto>> GetAnalogOutputTagAsync(string name) {
-        return await GetTagAsync<AnalogOutputTag, AnalogOutputUnitDto>(name);
+        var tag = await tagRepository.GetTagAsync(name);
+        if (tag == null)
+            return new ServiceResponse<AnalogOutputUnitDto>(HttpStatusCode.NotFound, "Tag not found.");
+        
+        if (tag.GetType() != typeof(AnalogOutputTag))
+            return new ServiceResponse<AnalogOutputUnitDto>(
+                HttpStatusCode.BadRequest,
+                "Wrong tag type."
+            );
+        
+        return new ServiceResponse<AnalogOutputUnitDto>(
+            mapper.Map<AnalogOutputUnitDto>((AnalogOutputTag) tag),
+            HttpStatusCode.OK
+        );
     }
     
-    public async Task<ServiceResponse<DigitalInputUnitDto>> GetDigitalInputTagAsync(string name) {
-        return await GetTagAsync<DigitalInputTag, DigitalInputUnitDto>(name);
+    public async Task<ServiceResponse<DigitalInputUnitDto>> GetDigitalInputTagAsync(
+        string name,
+        RegisterInputUnitDto dto
+    ) {
+        var tag = await tagRepository.GetTagAsync(name);
+        if (tag == null)
+            return new ServiceResponse<DigitalInputUnitDto>(HttpStatusCode.NotFound, "Tag not found.");
+        
+        if (tag.GetType() != typeof(DigitalInputTag))
+            return new ServiceResponse<DigitalInputUnitDto>(
+                HttpStatusCode.BadRequest,
+                "Wrong tag type."
+            );
+        
+        digitalRealTimeDriver.RegisterWriter(tag.InputOutputAddress, dto.PublicKey);
+        return new ServiceResponse<DigitalInputUnitDto>(
+            mapper.Map<DigitalInputUnitDto>((DigitalInputTag) tag),
+            HttpStatusCode.OK
+        );
     }
     
     public async Task<ServiceResponse<DigitalOutputUnitDto>> GetDigitalOutputTagAsync(string name) {
-        return await GetTagAsync<DigitalOutputTag, DigitalOutputUnitDto>(name);
+        var tag = await tagRepository.GetTagAsync(name);
+        if (tag == null)
+            return new ServiceResponse<DigitalOutputUnitDto>(HttpStatusCode.NotFound, "Tag not found.");
+        
+        if (tag.GetType() != typeof(DigitalOutputTag))
+            return new ServiceResponse<DigitalOutputUnitDto>(
+                HttpStatusCode.BadRequest,
+                "Wrong tag type."
+            );
+        
+        return new ServiceResponse<DigitalOutputUnitDto>(
+            mapper.Map<DigitalOutputUnitDto>((DigitalOutputTag) tag),
+            HttpStatusCode.OK
+        );
     }
 
     public async Task<Tag?> CreateTagAsync(Tag tag)

@@ -10,11 +10,11 @@ public interface ITagService {
     
     Task<RtuInformationDto?> GetTagForRtuAsync(string name);
     
-    Task<ServiceResponse<AnalogInputUnitDto>> GetAnalogInputTagAsync(string name);
+    Task<ServiceResponse<AnalogInputUnitDto>> GetAnalogInputTagAsync(string name, RegisterInputUnitDto dto);
     
     Task<ServiceResponse<AnalogOutputUnitDto>> GetAnalogOutputTagAsync(string name);
     
-    Task<ServiceResponse<DigitalInputUnitDto>> GetDigitalInputTagAsync(string name);
+    Task<ServiceResponse<DigitalInputUnitDto>> GetDigitalInputTagAsync(string name, RegisterInputUnitDto dto);
     
     Task<ServiceResponse<DigitalOutputUnitDto>> GetDigitalOutputTagAsync(string name);
     

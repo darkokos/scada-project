@@ -5,7 +5,7 @@ using RealTimeUnit.Services;
 
 namespace RealTimeUnit.Units;
 
-public class DigitalInputUnit(string tagName, TimeSpan scanTime, AsymmetricAlgorithm key) : IRtu {
+public class DigitalInputUnit(string tagName, TimeSpan scanTime, RSA key) : IRtu {
     public static async Task<IRtu?> Create(string tagName) {
         var key = RSA.Create();
         var response = await RtuService.GetDigitalInputUnitInformation(
@@ -38,6 +38,17 @@ public class DigitalInputUnit(string tagName, TimeSpan scanTime, AsymmetricAlgor
                 var digitalValueDto = new DigitalValueDto(tagName, GenerateValue(), DateTime.Now);
                 digitalValueDto.Sign(key);
                 var response = await RtuService.SendDigitalValue(digitalValueDto);
+                if (!response.IsSuccessStatusCode) {
+                    Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    continue;
+                }
+                
+                var returnedDigitalValueDto =
+                    JsonConvert.DeserializeObject<DigitalValueDto>(await response.Content.ReadAsStringAsync());
+                if (returnedDigitalValueDto == null) {
+                    Console.WriteLine("Something went wrong while fetching the RTU information.");
+                }
+                Console.WriteLine($"Sent value: {returnedDigitalValueDto?.Value}");
                 
                 Thread.Sleep(scanTime);
             }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScadaCore.Data;
+using ScadaCore.Drivers;
 using ScadaCore.Repositories;
 using ScadaCore.Services;
 
@@ -27,12 +28,11 @@ public class Program
         // Mappers
         builder.Services.AddAutoMapper(typeof(Program).Assembly);
         
-        // Controllers
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        // Drivers
+        builder.Services.AddScoped<IAnalogRealTimeDriver, AnalogRealTimeDriver>();
+        builder.Services.AddScoped<IDigitalRealTimeDriver, DigitalRealTimeDriver>();
         
+        // Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ITagService, TagService>();
@@ -45,7 +45,14 @@ public class Program
         builder.Services.AddScoped<IReportService, ReportService>();
         
         builder.Services.AddSingleton<UserState>();
-
+        
+        // Controllers
+        builder.Services.AddControllers();
+        
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
