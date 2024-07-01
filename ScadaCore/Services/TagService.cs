@@ -142,11 +142,23 @@ public class TagService(
         );
     }
 
-    public async Task<Tag?> CreateTagAsync(Tag tag)
-    {
-        var task = tagRepository.CreateTagAsync(tag);
-        task.Wait();
-        return task.Result;
+    public async Task<ServiceResponse<Tag>> CreateTagAsync(Tag tag) {
+        if (await tagRepository.GetTagAsync(tag.Name) != null)
+            return new ServiceResponse<Tag>(HttpStatusCode.BadRequest, "Tag with such name already exists.");
+        
+        if (await tagRepository.GetTagByInputOutputAddressAsync(tag.InputOutputAddress) != null)
+            return new ServiceResponse<Tag>(
+                HttpStatusCode.BadRequest,
+                "Another tag receives/sends values from/to such an address."
+            );
+            
+        var createdTag = await tagRepository.CreateTagAsync(tag);
+        if (createdTag == null)
+            return new ServiceResponse<Tag>(
+                HttpStatusCode.InternalServerError,
+                "Something went wrong while creating the tag."
+            );
+        return new ServiceResponse<Tag>(createdTag, HttpStatusCode.OK);
     }
 
     public async Task<bool> DeleteTagAsync(Tag tag)

@@ -20,7 +20,7 @@ public interface ITagService {
     
     Task<ServiceResponse<DigitalOutputUnitDto>> GetDigitalOutputTagAsync(string name);
     
-    Task<Tag?> CreateTagAsync(Tag tag);
+    Task<ServiceResponse<Tag>> CreateTagAsync(Tag tag);
 
     Task<bool> DeleteTagAsync(Tag tag);
 

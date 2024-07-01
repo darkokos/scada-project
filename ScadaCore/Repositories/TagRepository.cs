@@ -61,6 +61,37 @@ public class TagRepository : ITagRepository {
         return null;
     }
 
+    public async Task<Tag?> GetTagByInputOutputAddressAsync(int inputOutputAddress) {
+        var rootElement = await GetRootElement();
+        
+        var tagTypes =
+            new [] {
+                AnalogInputTag.GetXName,
+                AnalogOutputTag.GetXName,
+                DigitalInputTag.GetXName,
+                DigitalOutputTag.GetXName
+            };
+        var tagsXElements =
+            rootElement.Descendants().Where(descendant => tagTypes.Contains(descendant.Name.LocalName));
+        
+        foreach (var tagXElement in tagsXElements) {
+            if (tagXElement.Element(Tag.GetInputOutputAddressXElementName())?.Value != inputOutputAddress.ToString())
+                continue;
+
+            switch (tagXElement.Name.LocalName) {
+                case AnalogInputTag.GetXName:
+                    return new AnalogInputTag(tagXElement);
+                case AnalogOutputTag.GetXName:
+                    return new AnalogOutputTag(tagXElement);
+                case DigitalInputTag.GetXName:
+                    return new DigitalInputTag(tagXElement);
+                case DigitalOutputTag.GetXName:
+                    return new DigitalOutputTag(tagXElement);
+            }
+        }
+        return null;
+    }
+
     public async Task<ICollection<Tag>> GetAllInputTags() {
         var rootElement = await GetRootElement();
         
