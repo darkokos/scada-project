@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using ScadaCore.Models;
 
 namespace ScadaCore.Repositories;
@@ -60,6 +59,32 @@ public class TagRepository : ITagRepository {
             }
         }
         return null;
+    }
+
+    public async Task<ICollection<Tag>> GetAllInputTags() {
+        var rootElement = await GetRootElement();
+        
+        var tagTypes =
+            new [] {
+                AnalogInputTag.GetXName,
+                DigitalInputTag.GetXName
+            };
+        var tagsXElements =
+            rootElement.Descendants().Where(descendant => tagTypes.Contains(descendant.Name.LocalName));
+        
+        var tags = new Collection<Tag>();
+        foreach (var tagXElement in tagsXElements)
+        {
+            switch (tagXElement.Name.LocalName) {
+                case AnalogInputTag.GetXName:
+                    tags.Add(new AnalogOutputTag(tagXElement));
+                    break;
+                case DigitalInputTag.GetXName:
+                    tags.Add(new DigitalOutputTag(tagXElement));
+                    break;
+            }
+        }
+        return tags;
     }
 
     private static async Task SaveXElementAsync(XElement xElement) {

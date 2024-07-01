@@ -5,6 +5,8 @@ namespace ScadaCore.Repositories;
 
 public interface ITagRepository {
     Task<Tag?> GetTagAsync(string name);
+
+    Task<ICollection<Tag>> GetAllInputTags();
     
     Task<Tag?> CreateTagAsync(Tag tag);
 

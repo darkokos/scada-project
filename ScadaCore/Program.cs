@@ -31,6 +31,8 @@ public class Program
         // Drivers
         builder.Services.AddScoped<IAnalogRealTimeDriver, AnalogRealTimeDriver>();
         builder.Services.AddScoped<IDigitalRealTimeDriver, DigitalRealTimeDriver>();
+        builder.Services.AddScoped<IAnalogSimulationDriver, AnalogSimulationDriver>();
+        builder.Services.AddScoped<IDigitalSimulationDriver, DigitalSimulationDriver>();
         
         // Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -45,6 +47,8 @@ public class Program
         builder.Services.AddScoped<IReportService, ReportService>();
         
         builder.Services.AddSingleton<UserState>();
+
+        builder.Services.AddHostedService<TagProcessing>();
         
         // Controllers
         builder.Services.AddControllers();

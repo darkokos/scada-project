@@ -1,7 +1,6 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using ScadaCore.Models;
-using ScadaCore.Services;
 
 namespace ScadaCore.Repositories;
 

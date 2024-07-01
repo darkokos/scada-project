@@ -7,8 +7,10 @@ namespace ScadaCore.Services;
 
 public interface ITagService {
     Task<Tag?> GetTagAsync(string name);
+
+    Task<ICollection<Tag>> GetAllInputTags();
     
-    Task<RtuInformationDto?> GetTagForRtuAsync(string name);
+    Task<ServiceResponse<RtuInformationDto>> GetTagForRtuAsync(string name);
     
     Task<ServiceResponse<AnalogInputUnitDto>> GetAnalogInputTagAsync(string name, RegisterInputUnitDto dto);
     

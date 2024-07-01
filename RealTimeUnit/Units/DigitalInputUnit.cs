@@ -48,7 +48,7 @@ public class DigitalInputUnit(string tagName, TimeSpan scanTime, RSA key) : IRtu
                 if (returnedDigitalValueDto == null) {
                     Console.WriteLine("Something went wrong while fetching the RTU information.");
                 }
-                Console.WriteLine($"Sent value: {returnedDigitalValueDto?.Value}");
+                Console.WriteLine($"Sent value: {(returnedDigitalValueDto?.Value ?? default ? 1 : 0)}");
                 
                 Thread.Sleep(scanTime);
             }

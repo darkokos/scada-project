@@ -37,4 +37,8 @@ public class AnalogRealTimeDriver : IAnalogRealTimeDriver {
         Values[outputAddress] = value;
         return new ServiceResponse<AnalogValueDto>(value, HttpStatusCode.OK);
     }
+
+    public void ClearValues() {
+        Values.Clear();
+    }
 }

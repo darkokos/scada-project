@@ -16,9 +16,15 @@ public class RtuController(
     [HttpGet("{tagName}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RtuInformationDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RtuInformationDto>> GetTag(string tagName) {
-        var rtuInformation = await tagService.GetTagForRtuAsync(tagName);
-        return rtuInformation == null ? NotFound() : Ok(rtuInformation) ;
+        var serviceResponse = await tagService.GetTagForRtuAsync(tagName);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("analog/input/{tagName}")]

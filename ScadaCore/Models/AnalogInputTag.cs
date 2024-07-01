@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using Common.DatabaseManagerCommon;
 using Lombok.NET;
 
 namespace ScadaCore.Models;

@@ -21,16 +21,48 @@ public class TagService(
         task.Wait();
         return task.Result;
     }
+
+    public async Task<ICollection<Tag>> GetAllInputTags() {
+        return await tagRepository.GetAllInputTags();
+    }
     
-    public async Task<RtuInformationDto?> GetTagForRtuAsync(string name) {
+    public async Task<ServiceResponse<RtuInformationDto>> GetTagForRtuAsync(string name) {
         var tag = await tagRepository.GetTagAsync(name);
-        return tag == null ? null : tag switch {
-            AnalogInputTag analogInputTag => new RtuInformationDto(analogInputTag.Name, true, true),
-            AnalogOutputTag analogOutputTag => new RtuInformationDto(analogOutputTag.Name, true, false),
-            DigitalInputTag digitalInputTag => new RtuInformationDto(digitalInputTag.Name, false, true),
+        if (tag == null)
+            return new ServiceResponse<RtuInformationDto>(HttpStatusCode.NotFound, "Tag not found.");
+        
+        return tag switch {
+            AnalogInputTag analogInputTag =>
+                analogInputTag.IsSimulated ?
+                    new ServiceResponse<RtuInformationDto>(
+                        HttpStatusCode.BadRequest,
+                        "Found tag does not correspond to a real-time unit."
+                    )
+                    : new ServiceResponse<RtuInformationDto>(
+                        new RtuInformationDto(analogInputTag.Name, true, true),
+                        HttpStatusCode.OK
+                    ),
+            AnalogOutputTag analogOutputTag =>
+                new ServiceResponse<RtuInformationDto>(
+                    new RtuInformationDto(analogOutputTag.Name, true, false),
+                    HttpStatusCode.OK
+                ),
+            DigitalInputTag digitalInputTag =>
+                digitalInputTag.IsSimulated ?
+                    new ServiceResponse<RtuInformationDto>(
+                        HttpStatusCode.BadRequest, 
+                        "Found tag does not correspond to a real-time unit."
+                    )
+                    : new ServiceResponse<RtuInformationDto>(
+                        new RtuInformationDto(digitalInputTag.Name, false, true),
+                        HttpStatusCode.OK
+                    ),
             DigitalOutputTag digitalOutputTag =>
-                new RtuInformationDto(digitalOutputTag.Name, false, false),
-            _ => null
+                new ServiceResponse<RtuInformationDto>(
+                    new RtuInformationDto(digitalOutputTag.Name, false, false),
+                    HttpStatusCode.OK
+                ),
+            _ => new ServiceResponse<RtuInformationDto>(HttpStatusCode.NotFound, "Tag not found.")
         };
     }
 

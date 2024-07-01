@@ -37,4 +37,8 @@ public class DigitalRealTimeDriver : IDigitalRealTimeDriver {
         Values[outputAddress] = value;
         return new ServiceResponse<DigitalValueDto>(value, HttpStatusCode.OK);
     }
+
+    public void ClearValues() {
+        Values.Clear();
+    }
 }
