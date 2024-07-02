@@ -11,6 +11,7 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
     private ITagLogService _tagLogService;
     private IAlarmService _alarmService;
     private IAlarmLogService _alarmLogService;
+    private INotificationService _notificationService;
     
     private async Task HandleSimulatedAnalogTag(AnalogInputTag analogInputTag) {
         var value = _analogSimulationDriver?.Read(analogInputTag.InputOutputAddress);
@@ -20,16 +21,28 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
         var tagLog = await _tagLogService.CreateTagLogAsync(
             new AnalogTagLog(analogInputTag.Name, DateTime.Now, (decimal) value)
         );
+        if (tagLog != null)
+            await _notificationService.SendTrendingNotification(
+                $"{tagLog.TagName} emitted value: {((AnalogTagLog) tagLog).EmittedValue}, at: {tagLog.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")}"
+            );
 
         foreach (var alarmId in analogInputTag.AlarmIds) {
             var alarm = await _alarmService.GetAlarmAsync(alarmId);
             if (alarm == null)
                 continue;
+
+            if (!alarm.IsTriggered((decimal)value))
+                return;
             
-            if (alarm.IsTriggered((decimal)value))
-                await _alarmLogService.CreateAlarmLogAsync(
-                    new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
-                );
+            var alarmLog = await _alarmLogService.CreateAlarmLogAsync(
+                new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
+            );
+            if (alarmLog == null)
+                continue;
+                
+            await _notificationService.SendAlarmNotification(
+                $"{((int) alarm.Priority + 1).ToString()}|{alarmLog.Timestamp}"
+            );
         }
     }
     
@@ -39,16 +52,28 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
             return;
         
         var tagLog = await _tagLogService.CreateAnalogTagLogAsync(value);
+        if (tagLog != null)
+            await _notificationService.SendTrendingNotification(
+                $"{tagLog.TagName} emitted value: {((AnalogTagLog) tagLog).EmittedValue}, at: {tagLog.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")}"
+            );
         
         foreach (var alarmId in analogInputTag.AlarmIds) {
             var alarm = await _alarmService.GetAlarmAsync(alarmId);
             if (alarm == null)
                 continue;
+
+            if (!alarm.IsTriggered(value.Value))
+                return;
             
-            if (alarm.IsTriggered(value.Value))
-                await _alarmLogService.CreateAlarmLogAsync(
-                    new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
-                );
+            var alarmLog = await _alarmLogService.CreateAlarmLogAsync(
+                new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
+            );
+            if (alarmLog == null)
+                continue;
+
+            await _notificationService.SendAlarmNotification(
+                $"{((int) alarm.Priority + 1).ToString()}|{alarmLog.Timestamp}"
+            );
         }
     }
 
@@ -57,7 +82,13 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
         if (value == null)
             return;
 
-        await _tagLogService.CreateTagLogAsync(new DigitalTagLog(digitalInputTag.Name, DateTime.Now, (bool) value));
+        var tagLog = await _tagLogService.CreateTagLogAsync(
+            new DigitalTagLog(digitalInputTag.Name, DateTime.Now, (bool) value)
+        );
+        if (tagLog != null)
+            await _notificationService.SendTrendingNotification(
+                $"{tagLog.TagName} emitted value: {((AnalogTagLog) tagLog).EmittedValue}, at: {tagLog.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")}"
+            );
     }
 
     private async Task HandleNonSimulatedDigitalTag(DigitalInputTag digitalInputTag) {
@@ -65,7 +96,11 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
         if (value == null)
             return;
 
-        await _tagLogService.CreateDigitalTagLogAsync(value);
+        var tagLog = await _tagLogService.CreateDigitalTagLogAsync(value);
+        if (tagLog != null)
+            await _notificationService.SendTrendingNotification(
+                $"{tagLog.TagName} emitted value: {((AnalogTagLog) tagLog).EmittedValue}, at: {tagLog.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")}"
+            );
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
@@ -79,10 +114,7 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
             _tagLogService = scope.ServiceProvider.GetRequiredService<ITagLogService>();
             _alarmService = scope.ServiceProvider.GetRequiredService<IAlarmService>();
             _alarmLogService = scope.ServiceProvider.GetRequiredService<IAlarmLogService>();
-
-            /*
-             TODO: Publish everything that was emitted/triggered
-             */
+            _notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
             var tags = await tagService.GetAllInputTags();
             foreach (var tag in tags) {

@@ -49,6 +49,7 @@ public class Program
         builder.Services.AddScoped<IAlarmService, AlarmService>();
         builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddScoped<IAlarmLogService, AlarmLogService>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
         
         builder.Services.AddSingleton<UserState>();
 

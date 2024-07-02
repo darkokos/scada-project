@@ -37,7 +37,7 @@ public class AlarmService
 
     private void DisplayAlarm(string message)
     {
-        var parts = message.Split(':');
+        var parts = message.Split('|');
         if (parts.Length == 2 && int.TryParse(parts[0], out int priority))
         {
             for (int i = 0; i < priority; i++)
