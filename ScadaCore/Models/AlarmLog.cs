@@ -62,7 +62,7 @@ public partial class AlarmLog {
         Unit = alarmLogXElement.Attribute(GetUnitXAttributeName())?.Value ?? "";
         Timestamp = DateTime.TryParseExact(
             alarmLogXElement.Attribute(GetTimestampXAttributeName())?.Value,
-            "dd/MM/yyyy",
+            "dd/MM/yyyy HH:mm:ss",
             CultureInfo.InvariantCulture,
             DateTimeStyles.None,
             out var timestamp
