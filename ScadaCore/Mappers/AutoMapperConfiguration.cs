@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.RealTimeUnit;
+using Common.ReportManagerCommon;
 using ScadaCore.Models;
 
 namespace ScadaCore.Mappers;
@@ -41,6 +42,14 @@ public class AutoMapperConfiguration : Profile {
                 destination => destination.EmittedValue,
                 act =>
                     act.MapFrom(source => source.Value)
+            );
+        CreateMap<AlarmLog, AlarmLogDto>();
+        CreateMap<AnalogTagLog, TagLogDto>();
+        CreateMap<DigitalTagLog, TagLogDto>()
+            .ForMember(
+                destination => destination.EmittedValue,
+                act =>
+                    act.MapFrom(source => source.EmittedValue ? 1 : 0)
             );
     }
 }

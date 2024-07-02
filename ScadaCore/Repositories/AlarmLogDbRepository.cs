@@ -23,7 +23,7 @@ public class AlarmLogDbRepository : IAlarmLogRepository
         await _valueAndAlarmContext.SaveChangesAsync();
         return savedAlarmLog.Entity;
     }
-    public async Task<IEnumerable<AlarmLog>> GetAllAlarmLogsAsync()
+    public async Task<ICollection<AlarmLog>> GetAllAlarmLogsAsync()
     {
         return await _valueAndAlarmContext.AlarmLogs.ToListAsync();
     }

@@ -7,32 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]")]
-public class ReportManagerController : ControllerBase
+public class ReportManagerController(IReportService reportService) : ControllerBase
 {
-    private readonly ILogger<ReportManagerController> _logger;
-        private readonly IReportService _reportService;
-
-    public ReportManagerController(ILogger<ReportManagerController> logger, IReportService reportService)
-    {
-        _logger = logger;
-        _reportService = reportService;
-    }
-
     [HttpGet("alarms-in-specific-time-period")]
     public async Task<IActionResult> GetAlarmsInSpecificTimePeriod(
         [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
     {
-        var alarms = await _reportService.GetAlarmsInSpecificTimePeriod(startTime, endTime);
+        var alarms = await reportService.GetAlarmsInSpecificTimePeriod(startTime, endTime);
         return Ok(alarms);
     }
 
     [HttpGet("alarms-of-specific-priority")]
     public async Task<IActionResult> GetAlarmsOfSpecificPriority(
-        [FromQuery] string priority)
-    {
-        Enum.TryParse(priority, out AlarmPriority alarmPriority);
+        [FromQuery] string priority) {
+        if (!Enum.TryParse(priority, out AlarmPriority alarmPriority))
+            return BadRequest();
         
-        var alarms = await _reportService.GetAlarmsOfSpecificPriority(alarmPriority);
+        var alarms = await reportService.GetAlarmsOfSpecificPriority(alarmPriority);
         return Ok(alarms);
     }
 
@@ -40,7 +31,7 @@ public class ReportManagerController : ControllerBase
     public async Task<IActionResult> GetTagLogsInSpecificTimePeriod(
         [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
     {
-        var tagValues = await _reportService.GetTagLogsInSpecificTimePeriod(startTime, endTime);
+        var tagValues = await reportService.GetTagLogsInSpecificTimePeriod(startTime, endTime);
         return Ok(tagValues);
     }
     
@@ -48,21 +39,21 @@ public class ReportManagerController : ControllerBase
     public async Task<IActionResult> GetAllLogsForSpecificTag(
         [FromQuery] string tagName)
     {
-        var tagValues = await _reportService.GetAllLogsForSpecificTag(tagName);
+        var tagValues = await reportService.GetAllLogsForSpecificTag(tagName);
         return Ok(tagValues);
     }
 
     [HttpGet("last-values-all-ai-tags")]
-    public async Task<IActionResult> GetLastValuesAllAITags()
+    public async Task<IActionResult> GetLastValuesAllAiTags()
     {
-        var aiTagValues = await _reportService.GetLastLogOfAllAITags();
+        var aiTagValues = await reportService.GetLastLogOfAllAiTags();
         return Ok(aiTagValues);
     }
 
     [HttpGet("last-values-all-di-tags")]
-    public async Task<IActionResult> GetLastValuesAllDITags()
+    public async Task<IActionResult> GetLastValuesAllDiTags()
     {
-        var diTagValues = await _reportService.GetLastLogOfAllDITags();
+        var diTagValues = await reportService.GetLastLogOfAllDiTags();
         return Ok(diTagValues);
     }
 }

@@ -1,18 +1,16 @@
-﻿using System;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Common.ReportManagerCommon;
+using Newtonsoft.Json;
 
 namespace ReportManager;
 
-class Program
+internal abstract class Program
 {
-    private static readonly HttpClient _httpClient = new HttpClient();
+    private static readonly HttpClient HttpClient = new();
 
-    static async Task Main(string[] args)
+    private static async Task Main()
     {
-        bool running = true;
+        var running = true;
         while (running)
         {
             Console.WriteLine("Report Manager");
@@ -38,10 +36,10 @@ class Program
                     await GetTagValuesInTimePeriod();
                     break;
                 case "4":
-                    await GetLastValuesAllAITags();
+                    await GetLastValuesAllAiTags();
                     break;
                 case "5":
-                    await GetLastValuesAllDITags();
+                    await GetLastValuesAllDiTags();
                     break;
                 case "6":
                     await GetAllValuesForSpecificTag();
@@ -56,26 +54,68 @@ class Program
         }
     }
     
-    public static string ServerUrl = "http://localhost:59767/ReportManager";
+    private const string ServerUrl = "http://localhost:59767/ReportManager";
 
     private static async Task GetAlarmsInTimePeriod()
     {
-        Console.Write("Enter start time (yyyy-mm-dd): ");
-        var startTime = Console.ReadLine();
-        Console.Write("Enter end time (yyyy-mm-dd): ");
-        var endTime = Console.ReadLine();
+        DateTime startTime;
+        while (true) {
+            Console.Write("Enter start time (dd/MM/yyyy HH:mm:ss): ");
+            var input = Console.ReadLine();
+            if (input == null)
+                continue;
+            
+            if (
+                DateTime.TryParseExact(
+                    input,
+                    "dd/MM/yyyy HH:mm:ss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out startTime
+                )
+            )
+                break;
+            
+            Console.WriteLine("Wrong input format.");
+        }
         
-        var response = await _httpClient.GetAsync(
-            ServerUrl + $"/alarms-in-specific-time-period?startTime={startTime}&endTime={endTime}"
+        DateTime endTime;
+        while (true) {
+            Console.Write("Enter end time (dd/MM/yyyy HH:mm:ss): ");
+            var input = Console.ReadLine();
+            if (input == null)
+                continue;
+
+            if (
+                DateTime.TryParseExact(
+                    input,
+                    "dd/MM/yyyy HH:mm:ss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out endTime
+                )
+            )
+                break;
+
+            Console.WriteLine("Wrong input format.");
+        }
+
+        var response = await HttpClient.GetAsync(
+            ServerUrl + $"/alarms-in-specific-time-period?startTime={startTime.ToString("MM/dd/yyyy HH:mm:ss")}&endTime={endTime.ToString("MM/dd/yyyy HH:mm:ss")}"
             );
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var alarms = JsonSerializer.Deserialize<IEnumerable<AlarmLog>>(data);
-            Console.WriteLine("Time      | Priority | Type | Unit");
+            var alarms = JsonConvert.DeserializeObject<List<AlarmLogDto>>(data);
+            if (alarms == null) {
+                Console.WriteLine("Error fetching all requested alarms.");
+                return;
+            }
+            
+            Console.WriteLine("Time               | Priority | Type | Unit");
             foreach (var alarm in alarms)
             {
-                Console.WriteLine($"{alarm.Timestamp, 10}|{alarm.Priority, 10}|{alarm.Type, 6}|{alarm.Unit, 5}");
+                Console.WriteLine($"{alarm.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"), 19}|{alarm.Priority, 10}|{alarm.Type, 6}|{alarm.Unit, 5}");
             }
             Console.WriteLine();
         }
@@ -85,20 +125,34 @@ class Program
         }
     }
 
-    private static async Task GetAlarmsOfSpecificPriority()
-    {
-        Console.Write("Enter priority: ");
-        var priority = Console.ReadLine();
+    private static async Task GetAlarmsOfSpecificPriority() {
+        AlarmPriority alarmPriority;
+        while (true) {
+            Console.Write("Enter priority (Low/Medium/High): ");
+            var input = Console.ReadLine();
+            if (input == null)
+                continue;
 
-        var response = await _httpClient.GetAsync(ServerUrl + $"/alarms-of-specific-priority?priority={priority}");
+            if (Enum.TryParse(input, out alarmPriority))
+                break;
+            
+            Console.WriteLine("Wrong priority format.");
+        }
+
+        var response = await HttpClient.GetAsync(ServerUrl + $"/alarms-of-specific-priority?priority={alarmPriority.ToString()}");
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var alarms = JsonSerializer.Deserialize<IEnumerable<AlarmLog>>(data);
-            Console.WriteLine("Time      | Priority | Type | Unit");
+            var alarms = JsonConvert.DeserializeObject<List<AlarmLogDto>>(data);
+            if (alarms == null) {
+                Console.WriteLine("Error fetching all requested alarms.");
+                return;
+            }
+            
+            Console.WriteLine("Time               | Priority | Type | Unit");
             foreach (var alarm in alarms)
             {
-                Console.WriteLine($"{alarm.Timestamp, 10}|{alarm.Priority, 10}|{alarm.Type, 6}|{alarm.Unit, 5}");
+                Console.WriteLine($"{alarm.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"), 19}|{alarm.Priority, 10}|{alarm.Type, 6}|{alarm.Unit, 5}");
             }
             Console.WriteLine();
         }
@@ -110,31 +164,64 @@ class Program
 
     private static async Task GetTagValuesInTimePeriod()
     {
-        Console.Write("Enter start time (yyyy-mm-dd): ");
-        var startTime = Console.ReadLine();
-        Console.Write("Enter end time (yyyy-mm-dd): ");
-        var endTime = Console.ReadLine();
+        DateTime startTime;
+        while (true) {
+            Console.Write("Enter start time (dd/MM/yyyy HH:mm:ss): ");
+            var input = Console.ReadLine();
+            if (input == null)
+                continue;
+            
+            if (
+                DateTime.TryParseExact(
+                    input,
+                    "dd/MM/yyyy HH:mm:ss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out startTime
+                )
+            )
+                break;
+            
+            Console.WriteLine("Wrong input format.");
+        }
+        
+        DateTime endTime;
+        while (true) {
+            Console.Write("Enter end time (dd/MM/yyyy HH:mm:ss): ");
+            var input = Console.ReadLine();
+            if (input == null)
+                continue;
+            
+            if (
+                DateTime.TryParseExact(
+                    input,
+                    "dd/MM/yyyy HH:mm:ss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out endTime
+                )
+            )
+                break;
+            
+            Console.WriteLine("Wrong input format.");
+        }
 
-        var response = await _httpClient.GetAsync(ServerUrl + $"/tag-values-in-specific-time-period?startTime={startTime}&endTime={endTime}");
+        var response = await HttpClient.GetAsync(
+            ServerUrl + $"/tag-values-in-specific-time-period?startTime={startTime.ToString("MM/dd/yyyy HH:mm:ss")}&endTime={endTime.ToString("MM/dd/yyyy HH:mm:ss")}"
+        );
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var tagLogs = JsonSerializer.Deserialize<IEnumerable<TagLog>>(data);
+            var tagLogs = JsonConvert.DeserializeObject<List<TagLogDto>>(data);
+            if (tagLogs == null) {
+                Console.WriteLine("Error fetching all requested values for all tags.");
+                return;
+            }
+            
             Console.WriteLine("\nTag Type  |  Log ID  |  Timestamp  |  Value");
             foreach (var log in tagLogs)
             {
-                switch (log)
-                {
-                    case AnalogTagLog analogTagLog:
-                        Console.WriteLine($"Analog    |{analogTagLog.Id, 10}|{analogTagLog.Timestamp, 13}{analogTagLog.EmittedValue, 10}");
-                        break;
-                    case DigitalTagLog digitalTagLog:
-                        Console.WriteLine($"Digital   |{digitalTagLog.Id, 10}|{digitalTagLog.Timestamp, 13}{digitalTagLog.EmittedValue, 10}");
-                        break;
-                    default:
-                        Console.WriteLine("Unknown type");
-                        break;
-                }
+                Console.WriteLine($"Analog    |{log.Id, 10}|{log.Timestamp, 13}{log.EmittedValue, 10}");
             }
             Console.WriteLine();
         }
@@ -144,32 +231,24 @@ class Program
         }
     }
     
-    // NOTE: Im not sure what the log id is tbh
     private static async Task GetAllValuesForSpecificTag()
     {
         Console.Write("Enter tag Name: ");
         var tagName = Console.ReadLine();
 
-        var response = await _httpClient.GetAsync(ServerUrl + $"/all-values-for-specific-tag?tagName={tagName}");
+        var response = await HttpClient.GetAsync(ServerUrl + $"/all-values-for-specific-tag?tagName={tagName}");
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var tagLogs = JsonSerializer.Deserialize<IEnumerable<TagLog>>(data);
+            var tagLogs = JsonConvert.DeserializeObject<List<TagLogDto>>(data);
+            if (tagLogs == null) {
+                Console.WriteLine("Error fetching all values for requested tag.");
+                return;
+            }
+            
             Console.WriteLine("\nTag Type  |  Log ID  |  Timestamp  |  Value");
-            foreach (var log in tagLogs)
-            {
-                switch (log)
-                {
-                    case AnalogTagLog analogTagLog:
-                        Console.WriteLine($"Analog    |{analogTagLog.Id, 10}|{analogTagLog.Timestamp, 13}{analogTagLog.EmittedValue, 10}");
-                        break;
-                    case DigitalTagLog digitalTagLog:
-                        Console.WriteLine($"Digital   |{digitalTagLog.Id, 10}|{digitalTagLog.Timestamp, 13}{digitalTagLog.EmittedValue, 10}");
-                        break;
-                    default:
-                        Console.WriteLine("Unknown type");
-                        break;
-                }
+            foreach (var log in tagLogs) {
+                Console.WriteLine($"Analog    |{log.Id,10}|{log.Timestamp,13}{log.EmittedValue,10}");
             }
             Console.WriteLine();
         }
@@ -179,25 +258,22 @@ class Program
         }
     }
 
-    private static async Task GetLastValuesAllAITags()
+    private static async Task GetLastValuesAllAiTags()
     {
-        var response = await _httpClient.GetAsync(ServerUrl + "/last-values-all-ai-tags");
+        var response = await HttpClient.GetAsync(ServerUrl + "/last-values-all-ai-tags");
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var aiLogs = JsonSerializer.Deserialize<IEnumerable<TagLog>>(data);
-            Console.WriteLine("\nTag Type  |  Log ID  |  Timestamp  |  Value");
+            var aiLogs = JsonConvert.DeserializeObject<List<TagLogDto>>(data);
+            if (aiLogs == null) {
+                Console.WriteLine("Error fetching the latest analog input tags.");
+                return;
+            }
+                
+            Console.WriteLine("\nTag Type  |  Log ID  |     Timestamp     |  Value");
             foreach (var log in aiLogs)
             {
-                switch (log)
-                {
-                    case AnalogTagLog analogTagLog:
-                        Console.WriteLine($"Analog    |{analogTagLog.Id, 10}|{analogTagLog.Timestamp, 13}{analogTagLog.EmittedValue, 10}");
-                        break;
-                    default:
-                        Console.WriteLine("Unknown type");
-                        break;
-                }
+                Console.WriteLine($"Analog    |{log.Id, 10}|{log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"), 19}|{log.EmittedValue, 10}");
             }
             Console.WriteLine();
         }
@@ -207,25 +283,24 @@ class Program
         }
     }
 
-    private static async Task GetLastValuesAllDITags()
+    private static async Task GetLastValuesAllDiTags()
     {
-        var response = await _httpClient.GetAsync(ServerUrl + "/last-values-all-di-tags");
+        var response = await HttpClient.GetAsync(ServerUrl + "/last-values-all-di-tags");
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var diLogs = JsonSerializer.Deserialize<IEnumerable<TagLog>>(data);
-            Console.WriteLine("\nTag Type  |  Log ID  |  Timestamp  |  Value");
+            var diLogs = JsonConvert.DeserializeObject<List<TagLogDto>>(data);
+            if (diLogs == null) {
+                Console.WriteLine("Error fetching the latest digital input tags.");
+                return;
+            }
+            
+            Console.WriteLine("\nTag Type  |  Log ID  |     Timestamp     |  Value");
             foreach (var log in diLogs)
             {
-                switch (log)
-                {
-                    case AnalogTagLog analogTagLog:
-                        Console.WriteLine($"Digital   |{analogTagLog.Id, 10}|{analogTagLog.Timestamp, 13}{analogTagLog.EmittedValue, 10}");
-                        break;
-                    default:
-                        Console.WriteLine("Unknown type");
-                        break;
-                }
+                Console.WriteLine(
+                    $"Digital   |{log.Id, 10}|{log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"), 19}|{log.EmittedValue, 10}"
+                );
             }
             Console.WriteLine();
         }

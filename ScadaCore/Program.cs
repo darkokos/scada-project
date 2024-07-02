@@ -30,8 +30,8 @@ public class Program
         builder.Services.AddScoped<ITagRepository, TagRepository>();
         builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
         builder.Services.AddScoped<IAlarmRepository, AlarmRepository>();
-        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogDbRepository>();
         builder.Services.AddScoped<IAlarmLogRepository, AlarmLogXmlRepository>();
+        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogDbRepository>();
         
         // Mappers
         builder.Services.AddAutoMapper(typeof(Program).Assembly);

@@ -41,20 +41,41 @@ public class TagLogRepository(ValueAndAlarmContext valueAndAlarmContext) : ITagL
             .FirstOrDefault();
     }
     
-    public async Task<IEnumerable<TagLog?>> GetAllTagLogsAsync()
+    public async Task<ICollection<TagLog>> GetAllTagLogsAsync()
     {
-        IEnumerable<TagLog> logs = await valueAndAlarmContext.TagLogs.ToListAsync();
+        var fetchedLogs = await valueAndAlarmContext.TagLogs.ToListAsync();
+        var returnLogs = new List<TagLog>();
 
-        IEnumerable<TagLog> tagLogs = new List<TagLog>();
+        fetchedLogs.ForEach(log => {
+            if (log.GetType() == typeof(AnalogTagLog))
+                returnLogs.Add((AnalogTagLog) log);
+            else
+                returnLogs.Add((DigitalTagLog) log);
+        });
+        return returnLogs;
+    }
+    
+    public async Task<ICollection<TagLog>> GetAllAnalogTagLogsAsync()
+    {
+        var fetchedLogs = await valueAndAlarmContext.TagLogs.ToListAsync();
+        var returnLogs = new List<TagLog>();
 
-        for (var i = 0; i < logs.Count(); i++)
-        {
-            tagLogs.Append(logs.ElementAt(i) switch {
-                AnalogTagLog analogTagLog => analogTagLog,
-                DigitalTagLog digitalTagLog => digitalTagLog,
-                _ => null
-            });
-        }
-        return tagLogs;
+        fetchedLogs.ForEach(log => {
+            if (log.GetType() == typeof(AnalogTagLog))
+                returnLogs.Add((AnalogTagLog) log);
+        });
+        return returnLogs;
+    }
+    
+    public async Task<ICollection<TagLog>> GetAllDigitalTagLogsAsync()
+    {
+        var fetchedLogs = await valueAndAlarmContext.TagLogs.ToListAsync();
+        var returnLogs = new List<TagLog>();
+
+        fetchedLogs.ForEach(log => {
+            if (log.GetType() == typeof(DigitalTagLog))
+                returnLogs.Add((DigitalTagLog) log);
+        });
+        return returnLogs;
     }
 }

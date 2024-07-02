@@ -1,4 +1,5 @@
-﻿using ScadaCore.Models;
+﻿using Common.ReportManagerCommon;
+using AlarmPriority = ScadaCore.Models.AlarmPriority;
 
 namespace ScadaCore.Services;
 
@@ -8,11 +9,15 @@ using System.Threading.Tasks;
 
 public interface IReportService
 {
-        Task<IEnumerable<AlarmLog>> GetAlarmsInSpecificTimePeriod(DateTime startTime, DateTime endTime);
-        Task<IEnumerable<AlarmLog>> GetAlarmsOfSpecificPriority(AlarmPriority priority);
-        Task<IEnumerable<TagLog>> GetTagLogsInSpecificTimePeriod(DateTime startTime, DateTime endTime);
-        Task<IEnumerable<TagLog>> GetAllLogsForSpecificTag(string tagName);
+        Task<ICollection<AlarmLogDto>> GetAlarmsInSpecificTimePeriod(DateTime startTime, DateTime endTime);
         
-        Task<IEnumerable<TagLog>> GetLastLogOfAllAITags();
-        Task<IEnumerable<TagLog>> GetLastLogOfAllDITags();
+        Task<ICollection<AlarmLogDto>> GetAlarmsOfSpecificPriority(AlarmPriority priority);
+        
+        Task<ICollection<TagLogDto>> GetTagLogsInSpecificTimePeriod(DateTime startTime, DateTime endTime);
+        
+        Task<ICollection<TagLogDto>> GetAllLogsForSpecificTag(string tagName);
+        
+        Task<ICollection<TagLogDto>> GetLastLogOfAllAiTags();
+        
+        Task<ICollection<TagLogDto>> GetLastLogOfAllDiTags();
 }

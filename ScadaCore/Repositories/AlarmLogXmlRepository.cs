@@ -57,8 +57,8 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
         return new AlarmLog(alarmLogXElement);
     }
 
-    public async Task<IEnumerable<AlarmLog>> GetAllAlarmLogsAsync()
+    public async Task<ICollection<AlarmLog>> GetAllAlarmLogsAsync()
     {
-        return null;
+        return await Task.Run(() => new List<AlarmLog>());
     }
 }

@@ -11,7 +11,7 @@ public enum AlarmPriority {
     High
 }
 
-public class AlarmLog {
+public class AlarmLogDto {
     public int Id { get; set; }
     public int AlarmId { get; set; }
     public AlarmType Type { get; set; }
