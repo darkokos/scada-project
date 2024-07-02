@@ -68,4 +68,12 @@ public partial class AlarmLog {
             out var timestamp
         ) ? timestamp : default;
     }
+
+    public AlarmLog(int alarmId, AlarmType type, AlarmPriority priority, string unit, DateTime timestamp) {
+        AlarmId = alarmId;
+        Type = type;
+        Priority = priority;
+        Unit = unit;
+        Timestamp = timestamp;
+    }
 }

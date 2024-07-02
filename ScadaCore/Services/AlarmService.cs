@@ -12,7 +12,7 @@ public class AlarmService : IAlarmService
         this.alarmRepository = alarmRepository;
     }
     public async Task<Alarm?> GetAlarmAsync(int id) {
-        return null;
+        return await alarmRepository.GetAlarmAsync(id);
     }
 
     public async Task<Alarm> CreateAlarmAsync(Alarm alarm)

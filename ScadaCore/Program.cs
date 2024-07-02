@@ -25,6 +25,14 @@ public class Program
         builder.Services.AddDbContext<ValueAndAlarmContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("ValuesAndAlarmsDb")));
         
+        // Repositories
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<ITagRepository, TagRepository>();
+        builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
+        builder.Services.AddScoped<IAlarmRepository, AlarmRepository>();
+        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogDbRepository>();
+        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogXmlRepository>();
+        
         // Mappers
         builder.Services.AddAutoMapper(typeof(Program).Assembly);
         
@@ -35,16 +43,12 @@ public class Program
         builder.Services.AddScoped<IDigitalSimulationDriver, DigitalSimulationDriver>();
         
         // Services
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ITagService, TagService>();
-        builder.Services.AddScoped<ITagRepository, TagRepository>();
         builder.Services.AddScoped<ITagLogService, TagLogService>();
-        builder.Services.AddScoped<ITagLogRepository, TagLogRepository>();
         builder.Services.AddScoped<IAlarmService, AlarmService>();
-        builder.Services.AddScoped<IAlarmRepository, AlarmRepository>();
-        builder.Services.AddScoped<IAlarmLogRepository, AlarmLogDbRepository>();
         builder.Services.AddScoped<IReportService, ReportService>();
+        builder.Services.AddScoped<IAlarmLogService, AlarmLogService>();
         
         builder.Services.AddSingleton<UserState>();
 

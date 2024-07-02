@@ -9,13 +9,28 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
     private IDigitalRealTimeDriver? _digitalRealTimeDriver;
     private IDigitalSimulationDriver? _digitalSimulationDriver;
     private ITagLogService _tagLogService;
+    private IAlarmService _alarmService;
+    private IAlarmLogService _alarmLogService;
     
     private async Task HandleSimulatedAnalogTag(AnalogInputTag analogInputTag) {
         var value = _analogSimulationDriver?.Read(analogInputTag.InputOutputAddress);
         if (value is null)
             return;
 
-        var tagLog = await _tagLogService.CreateTagLogAsync(new AnalogTagLog(analogInputTag.Name, DateTime.Now, (decimal) value));
+        var tagLog = await _tagLogService.CreateTagLogAsync(
+            new AnalogTagLog(analogInputTag.Name, DateTime.Now, (decimal) value)
+        );
+
+        foreach (var alarmId in analogInputTag.AlarmIds) {
+            var alarm = await _alarmService.GetAlarmAsync(alarmId);
+            if (alarm == null)
+                continue;
+            
+            if (alarm.IsTriggered((decimal)value))
+                await _alarmLogService.CreateAlarmLogAsync(
+                    new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
+                );
+        }
     }
     
     private async Task HandleNonSimulatedAnalogTag(AnalogInputTag analogInputTag) {
@@ -23,7 +38,18 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
         if (value == null)
             return;
         
-        await _tagLogService.CreateAnalogTagLogAsync(value);
+        var tagLog = await _tagLogService.CreateAnalogTagLogAsync(value);
+        
+        foreach (var alarmId in analogInputTag.AlarmIds) {
+            var alarm = await _alarmService.GetAlarmAsync(alarmId);
+            if (alarm == null)
+                continue;
+            
+            if (alarm.IsTriggered(value.Value))
+                await _alarmLogService.CreateAlarmLogAsync(
+                    new AlarmLog(alarm.Id, alarm.Type, alarm.Priority, alarm.Unit, DateTime.Now)
+                );
+        }
     }
 
     private async Task HandleSimulatedDigitalTag(DigitalInputTag digitalInputTag) {
@@ -51,9 +77,10 @@ public class TagProcessing(IServiceScopeFactory serviceScopeFactory) : Backgroun
             _digitalRealTimeDriver = scope.ServiceProvider.GetRequiredService<IDigitalRealTimeDriver>();
             _digitalSimulationDriver = scope.ServiceProvider.GetRequiredService<IDigitalSimulationDriver>();
             _tagLogService = scope.ServiceProvider.GetRequiredService<ITagLogService>();
+            _alarmService = scope.ServiceProvider.GetRequiredService<IAlarmService>();
+            _alarmLogService = scope.ServiceProvider.GetRequiredService<IAlarmLogService>();
 
             /*
-             TODO: Check if alarms were triggered and if they were, persist them
              TODO: Publish everything that was emitted/triggered
              */
 
