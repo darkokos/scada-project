@@ -108,10 +108,10 @@ public class TagRepository : ITagRepository {
         {
             switch (tagXElement.Name.LocalName) {
                 case AnalogInputTag.GetXName:
-                    tags.Add(new AnalogOutputTag(tagXElement));
+                    tags.Add(new AnalogInputTag(tagXElement));
                     break;
                 case DigitalInputTag.GetXName:
-                    tags.Add(new DigitalOutputTag(tagXElement));
+                    tags.Add(new DigitalInputTag(tagXElement));
                     break;
             }
         }
