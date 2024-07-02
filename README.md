@@ -1,5 +1,14 @@
 # scada-project
-Generic SCADA system implemented in C# and WCF
+Generic SCADA system implemented in C#, using ASP.NET
+
+# Prerequisites
+## Init database
+1. Run `docker compose up -d`
+2. After the container has initialised, run `./apply_migrations.sh`
+
+# Teardown
+## Database
+1. Run `docker compose down`
 
 # Contributors
 * Dragoslav Tamindžija, SV47/2021
