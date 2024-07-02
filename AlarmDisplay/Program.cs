@@ -7,7 +7,7 @@ namespace AlarmDisplay
     {
         static async Task Main(string[] args)
         {
-            using var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5038/") };
+            using var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:59767/") };
             var alarmService = new AlarmService(httpClient);
 
             Console.CancelKeyPress += (sender, eventArgs) =>

@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 
 namespace Common.RealTimeUnit;
 
@@ -7,7 +6,8 @@ public class DigitalValueDto(string tagName, bool value, DateTime timestamp) {
     public string TagName { get; set; } = tagName;
     public bool Value { get; set; } = value;
     public DateTime Timestamp { get; set; } = timestamp;
-    public string? Signature { get; set; }
+    public byte[]? HashValue { get; set; }
+    public byte[]? Signature { get; set; }
     
     private byte[] SerializeMessage() {
         using var memoryStream = new MemoryStream();
@@ -19,10 +19,24 @@ public class DigitalValueDto(string tagName, bool value, DateTime timestamp) {
         return memoryStream.ToArray();
     }
 
-    public void Sign(AsymmetricAlgorithm key) {
-        var hashValue = SHA256.HashData(SerializeMessage());
+    public void Sign(RSA key) {
+        byte[] hashValue;
+        using (var algorithm = SHA256.Create()) {
+            hashValue = algorithm.ComputeHash(SerializeMessage());
+        }
+        HashValue = hashValue;
+            
         var formatter = new RSAPKCS1SignatureFormatter(key);
-        formatter.SetHashAlgorithm("SHA256");
-        Signature = Encoding.UTF8.GetString(formatter.CreateSignature(hashValue));
+        formatter.SetHashAlgorithm(nameof(SHA256));
+        Signature = formatter.CreateSignature(HashValue);
+    }
+
+    public bool IsSignatureValid(RSA key) {
+        if (HashValue == null || Signature == null)
+            return false;
+        
+        var deformatter = new RSAPKCS1SignatureDeformatter(key);
+        deformatter.SetHashAlgorithm(nameof(SHA256));
+        return deformatter.VerifySignature(HashValue, Signature);
     }
 }

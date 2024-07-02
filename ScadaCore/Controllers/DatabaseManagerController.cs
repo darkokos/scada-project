@@ -1,4 +1,5 @@
-﻿using Common.DatabaseManagerCommon;
+﻿using System.Net;
+using Common.DatabaseManagerCommon;
 using Microsoft.AspNetCore.Mvc;
 using ScadaCore.Models;
 using ScadaCore.Services;
@@ -81,7 +82,7 @@ public class DatabaseManagerController : ControllerBase
     }
     
     [HttpPost("changeTagScanning")]
-    public IActionResult ChangeTagScanning([FromBody] ChangeScanTagDTO dto)
+    public async Task<IActionResult> ChangeTagScanning([FromBody] ChangeScanTagDTO dto)
     {
         if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         var getTagTask = this.tagService.GetTagAsync(dto.TagName);
@@ -95,10 +96,13 @@ public class DatabaseManagerController : ControllerBase
 
         var deleteTask = tagService.DeleteTagAsync(tag);
         deleteTask.Wait();
-        var createTask = tagService.CreateTagAsync(tag);
-        createTask.Wait();
-        
-        return Ok("");
+        var serviceResponse = await tagService.CreateTagAsync(tag);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.InternalServerError => NotFound(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("currentTagValues")]
@@ -121,7 +125,7 @@ public class DatabaseManagerController : ControllerBase
     }
 
     [HttpPost("addTag")]
-    public IActionResult addTag([FromBody] AddTagDTO dto)
+    public async Task<IActionResult> addTag([FromBody] AddTagDTO dto)
     {
         if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         Tag tag = null;
@@ -148,14 +152,17 @@ public class DatabaseManagerController : ControllerBase
             tag = new DigitalOutputTag(addTag.Name, addTag.Description, addTag.InputOutputAddress, addTag.InitialValue);
         }
 
-        var task = tagService.CreateTagAsync(tag);
-        task.Wait();
-
-        return Ok("");
+        var serviceResponse = await tagService.CreateTagAsync(tag);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.InternalServerError => NotFound(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("addAlarm")]
-    public IActionResult addAlarm([FromBody] AddAlarmDTO dto)
+    public async Task<IActionResult> addAlarm([FromBody] AddAlarmDTO dto)
     {
         if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         var getTagTask = this.tagService.GetTagAsync(dto.TagName);
@@ -176,13 +183,17 @@ public class DatabaseManagerController : ControllerBase
         analogTag.AlarmIds.Add(alarm.Id);
 
         this.tagService.DeleteTagAsync(tag).Wait();
-        this.tagService.CreateTagAsync(analogTag).Wait();
-        
-        return Ok("");
+        var serviceResponse = await tagService.CreateTagAsync(analogTag);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.InternalServerError => NotFound(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("writeTagValue")]
-    public IActionResult writeTagValue([FromBody] WriteTagValueDTO dto)
+    public async Task<IActionResult> writeTagValue([FromBody] WriteTagValueDTO dto)
     {
         if (!userState.Data.ContainsKey(dto.username) || userState.Data[dto.username] != dto.token) return BadRequest("");
         var getTagTask = this.tagService.GetTagAsync(dto.TagName);
@@ -193,17 +204,27 @@ public class DatabaseManagerController : ControllerBase
             var outputTag = (DigitalOutputTag)tag;
             outputTag.InitialValue = dto.boolValue ?? false;
             tagService.DeleteTagAsync(tag).Wait();
-            tagService.CreateTagAsync(outputTag).Wait();
+            var serviceResponse = await tagService.CreateTagAsync(tag);
+            return serviceResponse.StatusCode switch {
+                HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+                HttpStatusCode.InternalServerError => NotFound(serviceResponse.ErrorMessage),
+                HttpStatusCode.OK => Ok(serviceResponse.Body),
+                _ => StatusCode(StatusCodes.Status418ImATeapot)
+            };
 
         } else if (tag.GetType() == typeof(AnalogOutputTag) && dto.decimalValue != null)
         {
             var outputTag = (AnalogOutputTag)tag;
             outputTag.InitialValue = dto.decimalValue ?? 0;
             tagService.DeleteTagAsync(tag).Wait();
-            tagService.CreateTagAsync(outputTag).Wait();
+            var serviceResponse = await tagService.CreateTagAsync(tag);
+            return serviceResponse.StatusCode switch {
+                HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+                HttpStatusCode.InternalServerError => NotFound(serviceResponse.ErrorMessage),
+                HttpStatusCode.OK => Ok(serviceResponse.Body),
+                _ => StatusCode(StatusCodes.Status418ImATeapot)
+            };
         }
         else return BadRequest("");
-
-        return Ok("");
     }
 }

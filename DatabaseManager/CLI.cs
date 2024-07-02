@@ -355,7 +355,6 @@ public class CLI
         HttpManager.WriteTagOutputValue(dto).Wait();
     }
         
-    // TODO
     public void ShowCurrentTagValuesHandler()
     {
         var dto = new ShowCurrentTagValuesDTO();

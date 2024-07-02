@@ -1,5 +1,5 @@
 ﻿namespace ScadaCore.Drivers;
 
-public interface IDigitalDriver {
+public interface IDigitalSimulationDriver {
     bool? Read(int inputOutputAddress);
 }

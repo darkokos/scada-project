@@ -10,7 +10,7 @@ public class AnalogInputUnit(
     TimeSpan scanTime,
     decimal lowLimit,
     decimal highLimit,
-    AsymmetricAlgorithm key
+    RSA key
 ) : IRtu {
     public static async Task<IRtu?> Create(string tagName) {
         var key = RSA.Create();
@@ -50,6 +50,17 @@ public class AnalogInputUnit(
                 var dto = new AnalogValueDto(tagName, GenerateValue(), DateTime.Now);
                 dto.Sign(key);
                 var response = await RtuService.SendAnalogValue(dto);
+                if (!response.IsSuccessStatusCode) {
+                    Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    continue;
+                }
+                
+                var returnedAnalogValueDto=
+                    JsonConvert.DeserializeObject<AnalogValueDto>(await response.Content.ReadAsStringAsync());
+                if (returnedAnalogValueDto == null) {
+                    Console.WriteLine("Something went wrong while fetching the RTU information.");
+                }
+                Console.WriteLine($"Sent value: {returnedAnalogValueDto?.Value}");
                 
                 Thread.Sleep(scanTime);
             }

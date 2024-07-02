@@ -3,19 +3,12 @@ using Newtonsoft.Json;
 
 namespace ScadaCore.Services;
 
-public class NotificationService
+public class NotificationService : INotificationService
 {
-    private readonly HttpClient _httpClient;
-
-    public NotificationService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
-    public async Task SendTrendingNotification(string message)
-    {
+    public async Task SendTrendingNotification(string message) {
+        using var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(message), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync("http://localhost:5038/Trending/notify", content);
+        var response = await httpClient.PostAsync("http://localhost:59767/Trending/notify", content);
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Trending notification sent successfully.");
@@ -26,10 +19,10 @@ public class NotificationService
         }
     }
 
-    public async Task SendAlarmNotification(string message)
-    {
+    public async Task SendAlarmNotification(string message) {
+        using var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(message), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync("http://localhost:5038/Alarm/notify", content);
+        var response = await httpClient.PostAsync("http://localhost:59767/Alarm/notify", content);
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Alarm notification sent successfully.");

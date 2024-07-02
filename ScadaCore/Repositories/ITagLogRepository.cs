@@ -9,5 +9,9 @@ public interface ITagLogRepository {
 
     Task<TagLog?> GetLatestLog(String tagName);
     
-    Task<IEnumerable<TagLog?>> GetAllTagLogsAsync();
+    Task<ICollection<TagLog>> GetAllTagLogsAsync();
+
+    Task<ICollection<TagLog>> GetAllAnalogTagLogsAsync();
+    
+    Task<ICollection<TagLog>> GetAllDigitalTagLogsAsync();
 }

@@ -1,19 +1,30 @@
 ﻿using System.Net;
 using Common.RealTimeUnit;
 using Microsoft.AspNetCore.Mvc;
+using ScadaCore.Drivers;
 using ScadaCore.Services;
 
 namespace ScadaCore.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class RtuController(ITagService tagService, ITagLogService tagLogService) : ControllerBase {
+public class RtuController(
+    ITagService tagService,
+    IAnalogRealTimeDriver analogRealTimeDriver,
+    IDigitalRealTimeDriver digitalRealTimeDriver
+) : ControllerBase {
     [HttpGet("{tagName}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RtuInformationDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RtuInformationDto>> GetTag(string tagName) {
-        var rtuInformation = await tagService.GetTagForRtuAsync(tagName);
-        return rtuInformation == null ? NotFound() : Ok(rtuInformation) ;
+        var serviceResponse = await tagService.GetTagForRtuAsync(tagName);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("analog/input/{tagName}")]
@@ -24,10 +35,7 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
         string tagName,
         [FromBody] RegisterInputUnitDto dto
     ) {
-        
-        // TODO: Add key to driver
-        
-        var serviceResponse = await tagService.GetAnalogInputTagAsync(tagName);
+        var serviceResponse = await tagService.GetAnalogInputTagAsync(tagName, dto);
         return serviceResponse.StatusCode switch {
             HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
             HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
@@ -58,10 +66,7 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
         string tagName,
         [FromBody] RegisterInputUnitDto dto
     ) {
-        
-        // TODO: Add key to driver
-        
-        var serviceResponse = await tagService.GetDigitalInputTagAsync(tagName);
+        var serviceResponse = await tagService.GetDigitalInputTagAsync(tagName, dto);
         return serviceResponse.StatusCode switch {
             HttpStatusCode.NotFound => NotFound(serviceResponse.ErrorMessage),
             HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
@@ -85,18 +90,36 @@ public class RtuController(ITagService tagService, ITagLogService tagLogService)
     }
     
     [HttpPost("analog")]
-    public async Task<IActionResult> SendAnalogValue([FromBody] AnalogValueDto dto) {
-        
-        // TODO: Write value to driver
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DigitalOutputUnitDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AnalogValueDto>> SendAnalogValue([FromBody] AnalogValueDto dto) {
+        var tag = await tagService.GetTagAsync(dto.TagName);
+        if (tag == null)
+            return NotFound("The tag for this unit was not found.");
 
-        return StatusCode(StatusCodes.Status501NotImplemented);
+        var serviceResponse = analogRealTimeDriver.Write(tag.InputOutputAddress, dto);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
     
     [HttpPost("digital")]
-    public async Task<IActionResult> SendDigitalValue([FromBody] DigitalValueDto dto) {
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DigitalOutputUnitDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AnalogValueDto>> SendDigitalValue([FromBody] DigitalValueDto dto) {
+        var tag = await tagService.GetTagAsync(dto.TagName);
+        if (tag == null)
+            return NotFound("The tag for this unit was not found.");
         
-        // TODO: Write value to driver
-        
-        return StatusCode(StatusCodes.Status501NotImplemented);
+        var serviceResponse = digitalRealTimeDriver.Write(tag.InputOutputAddress, dto);
+        return serviceResponse.StatusCode switch {
+            HttpStatusCode.BadRequest => BadRequest(serviceResponse.ErrorMessage),
+            HttpStatusCode.OK => Ok(serviceResponse.Body),
+            _ => StatusCode(StatusCodes.Status418ImATeapot)
+        };
     }
 }

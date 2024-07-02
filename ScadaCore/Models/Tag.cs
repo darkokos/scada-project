@@ -17,7 +17,7 @@ public partial class Tag {
         return "description";
     }
     
-    private static string GetInputOutputAddressXElementName() {
+    public static string GetInputOutputAddressXElementName() {
         return "inputOutputAddress";
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace ScadaCore.Drivers;
 
-public class AnalogSimulationDriver : IAnalogDriver {
+public class AnalogSimulationDriver : IAnalogSimulationDriver {
     private static decimal Sine() {
         return (decimal) (100 * Math.Sin((double) DateTime.Now.Second / 60 * Math.PI));
     }

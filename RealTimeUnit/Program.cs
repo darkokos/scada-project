@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Common.RealTimeUnit;
+﻿using Common.RealTimeUnit;
 using Newtonsoft.Json;
 using RealTimeUnit.Services;
 using RealTimeUnit.Units;
@@ -15,9 +14,9 @@ internal abstract class Program {
         } while (tagName == null);
 
         var response = await RtuService.GetTag(tagName);
-        if (response.StatusCode == HttpStatusCode.NotFound) {
-            Console.WriteLine("Tag associated with input name was not found.");
-            return;
+        if (!response.IsSuccessStatusCode) {
+           Console.WriteLine(await response.Content.ReadAsStringAsync());
+           return;
         }
 
         var rtuInformation =
@@ -28,10 +27,10 @@ internal abstract class Program {
         }
 
         var unit = rtuInformation switch {
-            { isAnalog: true, isInput: true } => await AnalogInputUnit.Create(rtuInformation.TagName),
-            { isAnalog: true, isInput: false } => await AnalogOutputUnit.Create(rtuInformation.TagName),
-            { isAnalog: false, isInput: true } => await DigitalInputUnit.Create(rtuInformation.TagName),
-            { isAnalog: false, isInput: false } => await DigitalOutputUnit.Create(rtuInformation.TagName)
+            { IsAnalog: true, IsInput: true } => await AnalogInputUnit.Create(rtuInformation.TagName),
+            { IsAnalog: true, IsInput: false } => await AnalogOutputUnit.Create(rtuInformation.TagName),
+            { IsAnalog: false, IsInput: true } => await DigitalInputUnit.Create(rtuInformation.TagName),
+            { IsAnalog: false, IsInput: false } => await DigitalOutputUnit.Create(rtuInformation.TagName)
         };
         if (unit == null) {
             Console.WriteLine("Something went wrong while fetching the RTU information.");

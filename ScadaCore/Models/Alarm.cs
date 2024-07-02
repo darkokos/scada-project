@@ -70,4 +70,8 @@ public partial class Alarm {
         Threshold = threshold;
         Unit = unit;
     }
+
+    public bool IsTriggered(decimal value) {
+        return Type == AlarmType.Low && value < Threshold || Type == AlarmType.High && value > Threshold;
+    }
 }

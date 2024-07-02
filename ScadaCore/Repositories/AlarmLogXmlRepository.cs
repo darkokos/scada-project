@@ -44,7 +44,10 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
                 new XAttribute(AlarmLog.GetTypeXAttributeName(), alarmLog.Type),
                 new XAttribute(AlarmLog.GetPriorityXAttributeName(), alarmLog.Priority),
                 new XAttribute(AlarmLog.GetUnitXAttributeName(), alarmLog.Unit),
-                new XAttribute(AlarmLog.GetTimestampXAttributeName(), alarmLog.Timestamp.ToString("dd/MM/yyyy"))
+                new XAttribute(
+                    AlarmLog.GetTimestampXAttributeName(),
+                    alarmLog.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")
+                )
             );
         rootElement
             .Add(alarmLogXElement);
@@ -54,8 +57,8 @@ public class AlarmLogXmlRepository : IAlarmLogRepository {
         return new AlarmLog(alarmLogXElement);
     }
 
-    public async Task<IEnumerable<AlarmLog>> GetAllAlarmLogsAsync()
+    public async Task<ICollection<AlarmLog>> GetAllAlarmLogsAsync()
     {
-        return null;
+        return await Task.Run(() => new List<AlarmLog>());
     }
 }

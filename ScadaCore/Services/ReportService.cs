@@ -1,75 +1,73 @@
-﻿using ScadaCore.Models;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Common.ReportManagerCommon;
 using ScadaCore.Models;
 using ScadaCore.Repositories;
+using AlarmPriority = ScadaCore.Models.AlarmPriority;
 
 namespace ScadaCore.Services;
 
-public class ReportService : IReportService
+public class ReportService(
+    IAlarmLogRepository alarmLogRepository,
+    ITagLogRepository tagLogRepository,
+    IMapper mapper
+) : IReportService
 {
-    private readonly IAlarmLogRepository _alarmLogRepository;
-    private readonly ITagLogRepository _tagLogRepository;
-    private readonly ITagRepository _tagRepository;
-
-    public ReportService(IAlarmLogRepository alarmLogRepository, ITagLogRepository tagLogRepository, ITagRepository tagRepository)
+    public async Task<ICollection<AlarmLogDto>> GetAlarmsInSpecificTimePeriod(DateTime startTime, DateTime endTime)
     {
-        _alarmLogRepository = alarmLogRepository;
-        _tagLogRepository = tagLogRepository;
-        _tagRepository = tagRepository;
-    }
-
-    public async Task<IEnumerable<AlarmLog>> GetAlarmsInSpecificTimePeriod(DateTime startTime, DateTime endTime)
-    {
-        var alarms = await _alarmLogRepository.GetAllAlarmLogsAsync();
+        var alarms = await alarmLogRepository.GetAllAlarmLogsAsync();
         return alarms
             .Where(a => a.Timestamp >= startTime && a.Timestamp <= endTime)
             .OrderBy(a => a.Priority)
-            .ThenBy(a => a.Timestamp);
+            .ThenBy(a => a.Timestamp)
+            .Select(mapper.Map<AlarmLogDto>)
+            .ToList();
     }
 
-    public async Task<IEnumerable<AlarmLog>> GetAlarmsOfSpecificPriority(AlarmPriority priority)
+    public async Task<ICollection<AlarmLogDto>> GetAlarmsOfSpecificPriority(AlarmPriority priority)
     {
-        var alarms = await _alarmLogRepository.GetAllAlarmLogsAsync();
+        var alarms = await alarmLogRepository.GetAllAlarmLogsAsync();
         return alarms
             .Where(a => a.Priority == priority)
-            .OrderBy(a => a.Timestamp);
+            .OrderBy(a => a.Timestamp)
+            .Select(mapper.Map<AlarmLogDto>)
+            .ToList();
     }
 
-    public async Task<IEnumerable<TagLog>> GetTagLogsInSpecificTimePeriod(DateTime startTime, DateTime endTime)
+    public async Task<ICollection<TagLogDto>> GetTagLogsInSpecificTimePeriod(DateTime startTime, DateTime endTime)
     {
-        var tagLogs = await _tagLogRepository.GetAllTagLogsAsync();
+        var tagLogs = await tagLogRepository.GetAllTagLogsAsync();
         return tagLogs
             .Where(t => t.Timestamp >= startTime && t.Timestamp <= endTime)
-            .OrderBy(t => t.Timestamp);
+            .OrderBy(t => t.Timestamp)
+            .Select(mapper.Map<TagLogDto>)
+            .ToList();
     }
 
-    public async Task<IEnumerable<TagLog>> GetLastLogOfAllAITags()
+    public async Task<ICollection<TagLogDto>> GetLastLogOfAllAiTags()
     {
-        var tagLogs = await _tagLogRepository.GetAllTagLogsAsync();
+        var tagLogs = await tagLogRepository.GetAllAnalogTagLogsAsync();
         return tagLogs
-            .Where(t => _tagRepository.GetTagAsync(t.TagName).GetType() == typeof(AnalogInputTag))
             .GroupBy(t => t.TagName)
             .Select(g => g.OrderByDescending(t => t.Timestamp).First())
-            .OrderBy(t => t.Timestamp);
+            .OrderBy(t => t.Timestamp)
+            .Select(mapper.Map<TagLogDto>)
+            .ToList();
     }
 
-    public async Task<IEnumerable<TagLog>> GetLastLogOfAllDITags()
+    public async Task<ICollection<TagLogDto>> GetLastLogOfAllDiTags()
     {
-        var tagLogs = await _tagLogRepository.GetAllTagLogsAsync();
+        var tagLogs = await tagLogRepository.GetAllDigitalTagLogsAsync();
         return tagLogs
-            .Where(t => _tagRepository.GetTagAsync(t.TagName).GetType() == typeof(DigitalInputTag))
             .GroupBy(t => t.TagName)
             .Select(g => g.OrderByDescending(t => t.Timestamp).First())
-            .OrderBy(t => t.Timestamp);
+            .OrderBy(t => t.Timestamp)
+            .Select(mapper.Map<TagLogDto>)
+            .ToList();
     }
     
-    public async Task<IEnumerable<TagLog>> GetAllLogsForSpecificTag(string tagName)
+    public async Task<ICollection<TagLogDto>> GetAllLogsForSpecificTag(string tagName)
     {
-        var tagLogs = await _tagLogRepository.GetAllTagLogsAsync();
+        var tagLogs = await tagLogRepository.GetAllTagLogsAsync();
         return tagLogs
             .Where(t => t.TagName == tagName)
             .OrderBy(t =>
@@ -83,6 +81,8 @@ public class ReportService : IReportService
                     default:
                         return decimal.MinusOne;
                 }
-            });
+            })
+            .Select(mapper.Map<TagLogDto>)
+            .ToList();
     }
 }

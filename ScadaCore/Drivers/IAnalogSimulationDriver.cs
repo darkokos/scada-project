@@ -1,5 +1,5 @@
 ﻿namespace ScadaCore.Drivers;
 
-public interface IAnalogDriver {
+public interface IAnalogSimulationDriver {
     decimal? Read(int inputAddress);
 }
